@@ -1,0 +1,9 @@
+applets:
+  bazel:
+    name: bazel
+    image: beenverifiedinc/bazelbuild
+    image_tag: latest
+    entrypoint: bazel
+    volumes:
+    - $PWD:/app
+    work_dir: /app
