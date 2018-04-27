@@ -12,7 +12,7 @@ func init() {
 
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "update the repo from the registries",
+	Short: "update the repo from the registry configs",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		reg, err := registry.New()
 		if err != nil {
