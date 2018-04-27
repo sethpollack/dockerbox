@@ -36,6 +36,7 @@ applets:
     environment:
     - KUBECONFIG=/root/.kube/config
     volumes:
+    - $HOME/.kube:/root/.kube
     - $PWD:/app
     work_dir: /app
 ```
