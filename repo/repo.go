@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/imdario/mergo"
 	"github.com/sethpollack/dockerbox/io"
 	"github.com/sethpollack/dockerbox/registry"
 	yaml "gopkg.in/yaml.v2"
@@ -46,13 +45,10 @@ func (r *Repo) loadFile(filename string, fileType string) error {
 		return err
 	}
 
-	tmp := &Repo{}
-	err = yaml.Unmarshal(b, tmp)
+	err = yaml.Unmarshal(b, r)
 	if err != nil {
 		return err
 	}
-
-	mergo.Merge(r, tmp)
 
 	return nil
 }

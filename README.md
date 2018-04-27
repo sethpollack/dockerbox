@@ -46,3 +46,21 @@ To see the list of available applets run `dockerbox list`
 
 And to install an applet run `dockerbox install -i <applet name>` or `dockerbox install -a` to install all available applets. `dockerbox` installs applets by creating a symlink from `$HOME/.dockerbox/<applet name>` to the dockerbox binary  `$GOPATH/bin/dockerbox`.
 
+Full Applet Spec:
+
+- `name` string
+- `work_dir` string
+- `entrypoint` string
+- `restart` string
+- `network` string
+- `rm` bool (defaults true)
+- `interactive` bool (defaults true)
+- `privileged` bool
+- `detach` bool
+- `environment` list
+- `volumes` list
+- `ports` list
+- `env_file` list
+- `image` string
+- `image_tag` string
+- `command` list
