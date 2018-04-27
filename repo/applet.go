@@ -16,6 +16,7 @@ type Applet struct {
 	Network    string `yaml:"network,omitempty"`
 
 	RM          bool `yaml:"rm,omitempty"`
+	TTY         bool `yaml:"tty,omitempty"`
 	Interactive bool `yaml:"interactive,omitempty"`
 	Privileged  bool `yaml:"privileged,omitempty"`
 	Detach      bool `yaml:"detach,omitempty"`
@@ -37,6 +38,8 @@ func (a *Applet) Exec(extra ...string) error {
 	cmd := a.RunCmd(extra)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+
 	err := cmd.Run()
 	if err != nil {
 		return fmt.Errorf("error runnng applet %s: %v", a.Name, err)
@@ -49,6 +52,7 @@ func (a *Applet) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	raw := rawApplet{
 		RM:          true,
 		Interactive: true,
+		TTY:         true,
 		Tag:         "latest",
 	}
 	if err := unmarshal(&raw); err != nil {
@@ -91,6 +95,9 @@ func (a *Applet) RunCmd(extra []string) *exec.Cmd {
 	}
 	if a.Detach {
 		args = append(args, "--detach")
+	}
+	if a.TTY {
+		args = append(args, "--tty")
 	}
 
 	for _, f := range a.Env {
