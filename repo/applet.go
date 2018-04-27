@@ -39,7 +39,7 @@ func (a *Applet) Exec(extra ...string) error {
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {
-		return err
+		return fmt.Errorf("error runnng applet %s: %v", a.Name, err)
 	}
 	return nil
 }
