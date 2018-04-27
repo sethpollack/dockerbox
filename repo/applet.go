@@ -49,6 +49,7 @@ func (a *Applet) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	raw := rawApplet{
 		RM:          true,
 		Interactive: true,
+		Tag:         "latest",
 	}
 	if err := unmarshal(&raw); err != nil {
 		return err
