@@ -61,6 +61,8 @@ Full Applet Spec:
 - `volumes` list
 - `ports` list
 - `env_file` list
+- `dependencies` list (list of applets to run first)
+- `links` list
 - `image` string
 - `image_tag` string
 - `command` list

@@ -20,10 +20,12 @@ type Applet struct {
 	Privileged  bool `yaml:"privileged,omitempty"`
 	Detach      bool `yaml:"detach,omitempty"`
 
-	Env     []string `yaml:"environment,omitempty"`
-	Volumes []string `yaml:"volumes,omitempty"`
-	Ports   []string `yaml:"ports,omitempty"`
-	EnvFile []string `yaml:"env_file,omitempty"`
+	Env          []string `yaml:"environment,omitempty"`
+	Volumes      []string `yaml:"volumes,omitempty"`
+	Ports        []string `yaml:"ports,omitempty"`
+	EnvFile      []string `yaml:"env_file,omitempty"`
+	Dependencies []string `yaml:"dependencies,omitempty"`
+	Links        []string `yaml:"links,omitempty"`
 
 	Image string `yaml:"image,omitempty"`
 	Tag   string `yaml:"image_tag,omitempty"`
@@ -31,7 +33,7 @@ type Applet struct {
 	Command []string `yaml:"command,omitempty"`
 }
 
-func (a *Applet) Exec(extra []string) error {
+func (a *Applet) Exec(extra ...string) error {
 	cmd := a.RunCmd(extra)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -101,6 +103,9 @@ func (a *Applet) RunCmd(extra []string) *exec.Cmd {
 	}
 	for _, f := range a.EnvFile {
 		args = append(args, "--env-file", f)
+	}
+	for _, f := range a.Links {
+		args = append(args, "--link", f)
 	}
 
 	args = append(args, fmt.Sprintf("%s:%s", a.Image, a.Tag))

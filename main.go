@@ -30,6 +30,25 @@ func main() {
 			os.Exit(1)
 		}
 
-		a.Exec(args)
+		err := Exec(r, a, args...)
+		if err != nil {
+			fmt.Printf("Error running applet %v", err)
+			os.Exit(1)
+		}
 	}
+}
+
+func Exec(r *repo.Repo, a repo.Applet, args ...string) error {
+	for _, dep := range a.Dependencies {
+		d, ok := r.Applets[dep]
+		if !ok {
+			return fmt.Errorf("Dependency %s not found", dep)
+		}
+		err := Exec(r, d)
+		if err != nil {
+			return err
+		}
+	}
+
+	return a.Exec(args...)
 }
