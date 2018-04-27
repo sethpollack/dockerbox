@@ -55,6 +55,7 @@ func install(image string) {
 func linkCmd(image string) *exec.Cmd {
 	args := []string{
 		"-s",
+		"-f",
 		dockerboxExe,
 		fmt.Sprintf("%s/%s", prefix, image),
 	}
