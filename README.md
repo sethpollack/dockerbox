@@ -55,6 +55,7 @@ Full Applet Spec:
 - `restart` string
 - `network` string
 - `rm` bool (defaults true)
+- `tty` bool (defaults true)
 - `interactive` bool (defaults true)
 - `privileged` bool
 - `detach` bool
