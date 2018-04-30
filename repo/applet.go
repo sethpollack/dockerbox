@@ -20,6 +20,7 @@ type Applet struct {
 	Interactive bool `yaml:"interactive,omitempty"`
 	Privileged  bool `yaml:"privileged,omitempty"`
 	Detach      bool `yaml:"detach,omitempty"`
+	Kill        bool `yaml:"kill,omitempty"`
 
 	Env          []string `yaml:"environment,omitempty"`
 	Volumes      []string `yaml:"volumes,omitempty"`
@@ -47,6 +48,17 @@ func (a *Applet) Exec(extra ...string) error {
 	return nil
 }
 
+func (a *Applet) PreExec() {
+	cmd := a.KillCmd()
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	err := cmd.Run()
+	if err != nil {
+		fmt.Printf("error killing %s: %v", a.Name, err)
+	}
+}
+
 func (a *Applet) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	type rawApplet Applet
 	raw := rawApplet{
@@ -61,6 +73,15 @@ func (a *Applet) UnmarshalYAML(unmarshal func(interface{}) error) error {
 
 	*a = Applet(raw)
 	return nil
+}
+
+func (a *Applet) KillCmd() *exec.Cmd {
+	args := []string{
+		"kill",
+		a.Name,
+	}
+
+	return exec.Command(dockerExe, args...)
 }
 
 func (a *Applet) RunCmd(extra []string) *exec.Cmd {

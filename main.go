@@ -30,6 +30,10 @@ func main() {
 			os.Exit(1)
 		}
 
+		if a.Kill {
+			a.PreExec()
+		}
+
 		err := Exec(r, a, args...)
 		if err != nil {
 			fmt.Printf("Error running applet: %v", err)
