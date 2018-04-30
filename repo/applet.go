@@ -9,30 +9,30 @@ import (
 const dockerExe = "/usr/local/bin/docker"
 
 type Applet struct {
-	Name       string `yaml:"name,omitempty"`
-	WorkDir    string `yaml:"work_dir,omitempty"`
-	Entrypoint string `yaml:"entrypoint,omitempty"`
-	Restart    string `yaml:"restart,omitempty"`
-	Network    string `yaml:"network,omitempty"`
+	Name       string `yaml:"name"`
+	WorkDir    string `yaml:"work_dir"`
+	Entrypoint string `yaml:"entrypoint"`
+	Restart    string `yaml:"restart"`
+	Network    string `yaml:"network"`
 
-	RM          bool `yaml:"rm,omitempty"`
-	TTY         bool `yaml:"tty,omitempty"`
-	Interactive bool `yaml:"interactive,omitempty"`
-	Privileged  bool `yaml:"privileged,omitempty"`
-	Detach      bool `yaml:"detach,omitempty"`
-	Kill        bool `yaml:"kill,omitempty"`
+	RM          bool `yaml:"rm"`
+	TTY         bool `yaml:"tty"`
+	Interactive bool `yaml:"interactive"`
+	Privileged  bool `yaml:"privileged"`
+	Detach      bool `yaml:"detach"`
+	Kill        bool `yaml:"kill"`
 
-	Env          []string `yaml:"environment,omitempty"`
-	Volumes      []string `yaml:"volumes,omitempty"`
-	Ports        []string `yaml:"ports,omitempty"`
-	EnvFile      []string `yaml:"env_file,omitempty"`
-	Dependencies []string `yaml:"dependencies,omitempty"`
-	Links        []string `yaml:"links,omitempty"`
+	Env          []string `yaml:"environment"`
+	Volumes      []string `yaml:"volumes"`
+	Ports        []string `yaml:"ports"`
+	EnvFile      []string `yaml:"env_file"`
+	Dependencies []string `yaml:"dependencies"`
+	Links        []string `yaml:"links"`
 
-	Image string `yaml:"image,omitempty"`
-	Tag   string `yaml:"image_tag,omitempty"`
+	Image string `yaml:"image"`
+	Tag   string `yaml:"image_tag"`
 
-	Command []string `yaml:"command,omitempty"`
+	Command []string `yaml:"command"`
 }
 
 func (a *Applet) Exec(extra ...string) error {
