@@ -59,6 +59,7 @@ Full Applet Spec:
 - `interactive` bool (defaults true)
 - `privileged` bool
 - `detach` bool
+- `kill` bool (kills running container with the same name before running)
 - `environment` list
 - `volumes` list
 - `ports` list
