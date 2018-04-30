@@ -12,10 +12,10 @@ const (
 )
 
 type Registry struct {
-	Configs []*Config `yaml:"configs"`
+	Repos []*Repo `yaml:"repos"`
 }
 
-type Config struct {
+type Repo struct {
 	Name string `yaml:"name"`
 	Path string `yaml:"path"`
 	Type string `yaml:"type"`

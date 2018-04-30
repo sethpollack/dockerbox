@@ -15,7 +15,7 @@ export PATH=$PATH:$HOME/.dockerbox/bin/
 Add a `registry.yaml` file to `$HOME/.dockerbox/registry.yaml`
 
 ```yaml
-configs:
+repos:
 - name: local
   path: $HOME/.dockerbox/local.yaml
   type: file
@@ -41,13 +41,13 @@ applets:
     work_dir: /app
 ```
 
-To update your local applet repo (`$HOME/.dockerbox/repo.yaml`) from all the configs in the registry run `dockerbox update`.
+To update your local applet cache (`$HOME/.dockerbox/.cache.yaml`) from all the repos in the registry run `dockerbox update`.
 
 To see the list of available applets run `dockerbox list`
 
-And to install an applet run `dockerbox install -i <applet name>` or `dockerbox install -a` to install all available applets. `dockerbox` installs applets by creating a symlink from `$HOME/.dockerbox/<applet name>` to the dockerbox binary  `$GOPATH/bin/dockerbox`.
+And to install an applet run `dockerbox install -i <applet name>` or `dockerbox install -a` to install all available applets. `dockerbox` installs applets by creating a symlink from `$HOME/.dockerbox/<applet name>` to the dockerbox binary `$GOPATH/bin/dockerbox`.
 
-Full Applet Spec:
+Full applet spec:
 
 - `name` string
 - `work_dir` string

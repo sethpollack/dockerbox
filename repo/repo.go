@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	repoFile = "$HOME/.dockerbox/repo.yaml"
+	cacheFile = "$HOME/.dockerbox/.cache.yaml"
 )
 
 type Repo struct {
@@ -22,7 +22,7 @@ func New() *Repo {
 }
 
 func (r *Repo) Init() error {
-	return r.loadFile(os.ExpandEnv(repoFile), "file")
+	return r.loadFile(os.ExpandEnv(cacheFile), "file")
 }
 
 func (r *Repo) save() error {
@@ -31,7 +31,7 @@ func (r *Repo) save() error {
 		return err
 	}
 
-	err = ioutil.WriteFile(os.ExpandEnv(repoFile), b, 0644)
+	err = ioutil.WriteFile(os.ExpandEnv(cacheFile), b, 0644)
 	if err != nil {
 		return err
 	}
@@ -54,8 +54,8 @@ func (r *Repo) loadFile(filename string, fileType string) error {
 }
 
 func (r *Repo) Update(reg *registry.Registry) error {
-	for _, conf := range reg.Configs {
-		err := r.loadFile(os.ExpandEnv(conf.Path), conf.Type)
+	for _, repo := range reg.Repos {
+		err := r.loadFile(os.ExpandEnv(repo.Path), repo.Type)
 		if err != nil {
 			return err
 		}
