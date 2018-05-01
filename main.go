@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	entrypoint := filepath.Clean(os.Args[0])
+	entrypoint := filepath.Base(os.Args[0])
 	args := os.Args[1:]
 
 	r := repo.New()
