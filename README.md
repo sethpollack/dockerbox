@@ -1,6 +1,6 @@
 # DockerBox
 
-like busybox, just for docker.
+dockerbox is a single executable that runs docker containers based on local and remote run configurations.
 
 ## Install
 
@@ -41,7 +41,7 @@ applets:
     work_dir: /app
 ```
 
-To update your local applet cache (`$HOME/.dockerbox/.cache.yaml`) from all the repos in the registry run `dockerbox update`.
+To update your applet cache (`$HOME/.dockerbox/.cache.yaml`) from all the repos in the registry run `dockerbox update`.
 
 To see the list of available applets run `dockerbox list`
 
@@ -69,3 +69,16 @@ Full applet spec:
 - `image` string
 - `image_tag` string
 - `command` list
+
+## Usage
+```
+Usage:
+  dockerbox [command]
+
+Available Commands:
+  help        Help about any command
+  install     install docker applet
+  list        list all available applets in the repo
+  uninstall   uninstall docker applet
+  update      update the repo from the registry configs
+```
