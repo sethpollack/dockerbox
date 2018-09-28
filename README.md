@@ -4,7 +4,7 @@ dockerbox is a single executable that runs docker containers based on local and 
 
 ## Install
 
-> By default dockerbox configuration files live in `$HOME/.dockerbox/` and binaries are installed at `$HOME/.dockerbox/bin/`. To override these defaukts you can set the following environment variables `DOCKERBOX_ROOT_DIR` and `DOCKERBOX_INSTALL_DIR`.
+> By default dockerbox configuration files live in `$HOME/.dockerbox/` and binaries are installed at `$HOME/.dockerbox/bin/`. To override these defaults you can set the following environment variables `DOCKERBOX_ROOT_DIR` and `DOCKERBOX_INSTALL_DIR`.
 
 `go get github.com/sethpollack/dockerbox`
 
