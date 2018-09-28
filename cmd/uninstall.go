@@ -14,7 +14,7 @@ var uninstallAll bool
 func init() {
 	rootCmd.AddCommand(uninstallCmd)
 
-	uninstallCmd.Flags().StringVarP(&appletName, "applet", "i", "", "applet to uninstall")
+	uninstallCmd.Flags().StringVarP(&cfg.AppletName, "applet", "i", "", "applet to uninstall")
 	uninstallCmd.Flags().BoolVarP(&uninstallAll, "all", "a", false, "uninstall all applets.")
 }
 
@@ -23,19 +23,19 @@ var (
 		Use:   "uninstall",
 		Short: "uninstall docker applet",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if !uninstallAll && appletName == "" {
+			if !uninstallAll && cfg.AppletName == "" {
 				return fmt.Errorf("Missing --applet flag")
 			}
 
 			if uninstallAll {
-				r := repo.New()
+				r := repo.New(cfg.RootDir)
 				r.Init()
 
 				for _, a := range r.Applets {
 					uninstall(a.Name)
 				}
 			} else {
-				uninstall(appletName)
+				uninstall(cfg.AppletName)
 			}
 
 			return nil
@@ -52,7 +52,7 @@ func uninstall(image string) {
 
 func unlinkCmd(image string) *exec.Cmd {
 	args := []string{
-		fmt.Sprintf("%s/%s", prefix, image),
+		fmt.Sprintf("%s/%s", cfg.InstallDir, image),
 	}
 
 	return exec.Command("rm", args...)

@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/sethpollack/dockerbox/cmd"
+	"github.com/sethpollack/dockerbox/io"
 	"github.com/sethpollack/dockerbox/repo"
 )
 
@@ -13,7 +14,18 @@ func main() {
 	entrypoint := filepath.Base(os.Args[0])
 	args := os.Args[1:]
 
-	r := repo.New()
+	rootDir := io.GetEnv("DOCKERBOX_ROOT_DIR", "$HOME/.dockerbox")
+	installDir := io.GetEnv("DOCKERBOX_INSTALL_DIR", rootDir+"/bin")
+
+	exe, _ := os.Executable()
+
+	cfg := cmd.Config{
+		RootDir:      rootDir,
+		InstallDir:   installDir,
+		DockerboxExe: exe,
+	}
+
+	r := repo.New(rootDir)
 	err := r.Init()
 	if err != nil {
 		fmt.Printf("Error loading repo: %v", err)
@@ -22,7 +34,7 @@ func main() {
 
 	switch entrypoint {
 	case "dockerbox":
-		cmd.Execute()
+		cmd.Execute(cfg)
 	default:
 		a, ok := r.Applets[entrypoint]
 		if !ok {

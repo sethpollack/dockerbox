@@ -4,6 +4,8 @@ dockerbox is a single executable that runs docker containers based on local and 
 
 ## Install
 
+> By default dockerbox configuration files live in `$HOME/.dockerbox/` and binaries are installed at `$HOME/.dockerbox/bin/`. To override these defaukts you can set the following environment variables `DOCKERBOX_ROOT_DIR` and `DOCKERBOX_INSTALL_DIR`.
+
 `go get github.com/sethpollack/dockerbox`
 
 Add `dockerbox` to your path
@@ -17,7 +19,7 @@ Add a `registry.yaml` file to `$HOME/.dockerbox/registry.yaml`
 ```yaml
 repos:
 - name: local
-  path: $HOME/.dockerbox/local.yaml
+  path: $PWD/.dockerbox/local.yaml
   type: file
 - name: example
   path: https://raw.githubusercontent.com/sethpollack/dockerbox/master/example/example.yaml

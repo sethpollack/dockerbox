@@ -14,12 +14,12 @@ var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "update the repo from the registry configs",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		reg, err := registry.New()
+		reg, err := registry.New(cfg.RootDir)
 		if err != nil {
 			return err
 		}
 
-		r := repo.New()
+		r := repo.New(cfg.RootDir)
 
 		r.Update(reg)
 		if err != nil {

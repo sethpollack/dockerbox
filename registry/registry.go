@@ -1,14 +1,12 @@
 package registry
 
 import (
-	"os"
-
 	"github.com/sethpollack/dockerbox/io"
 	yaml "gopkg.in/yaml.v2"
 )
 
 const (
-	regFile = "$HOME/.dockerbox/registry.yaml"
+	regFile = "/registry.yaml"
 )
 
 type Registry struct {
@@ -21,9 +19,9 @@ type Repo struct {
 	Type string `yaml:"type"`
 }
 
-func New() (*Registry, error) {
+func New(rootDir string) (*Registry, error) {
 	reg := &Registry{}
-	err := reg.load(os.ExpandEnv(regFile))
+	err := reg.load(rootDir + regFile)
 	if err != nil {
 		return nil, err
 	}

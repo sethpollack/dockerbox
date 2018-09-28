@@ -10,19 +10,20 @@ import (
 )
 
 const (
-	cacheFile = "$HOME/.dockerbox/.cache.yaml"
+	cacheFile = "/.cache.yaml"
 )
 
 type Repo struct {
+	rootDir string
 	Applets map[string]Applet `yaml:"applets"`
 }
 
-func New() *Repo {
-	return &Repo{}
+func New(rootDir string) *Repo {
+	return &Repo{rootDir: rootDir}
 }
 
 func (r *Repo) Init() error {
-	return r.loadFile(os.ExpandEnv(cacheFile), "file")
+	return r.loadFile(r.rootDir+cacheFile, "file")
 }
 
 func (r *Repo) save() error {
@@ -31,7 +32,7 @@ func (r *Repo) save() error {
 		return err
 	}
 
-	err = ioutil.WriteFile(os.ExpandEnv(cacheFile), b, 0644)
+	err = ioutil.WriteFile(r.rootDir+cacheFile, b, 0644)
 	if err != nil {
 		return err
 	}

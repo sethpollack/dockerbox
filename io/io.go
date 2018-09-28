@@ -102,3 +102,11 @@ func DownloadFile(url string) ([]byte, error) {
 
 	return buff.Bytes(), err
 }
+
+func GetEnv(env, value string) string {
+	if _, exists := os.LookupEnv(env); exists {
+		value = os.Getenv(env)
+	}
+
+	return os.ExpandEnv(value)
+}

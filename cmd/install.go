@@ -14,7 +14,7 @@ var installAll bool
 
 func init() {
 	rootCmd.AddCommand(installCmd)
-	installCmd.Flags().StringVarP(&appletName, "applet", "i", "", "applet to install")
+	installCmd.Flags().StringVarP(&cfg.AppletName, "applet", "i", "", "applet to install")
 	installCmd.Flags().BoolVarP(&installAll, "all", "a", false, "install all applets.")
 }
 
@@ -22,23 +22,23 @@ var installCmd = &cobra.Command{
 	Use:   "install",
 	Short: "install docker applet",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if !installAll && appletName == "" {
+		if !installAll && cfg.AppletName == "" {
 			return fmt.Errorf("Missing --applet flag")
 		}
 
-		if err := io.EnsureDir(prefix); err != nil {
+		if err := io.EnsureDir(cfg.InstallDir); err != nil {
 			return err
 		}
 
 		if installAll {
-			r := repo.New()
+			r := repo.New(cfg.RootDir)
 			r.Init()
 
 			for _, a := range r.Applets {
 				install(a.Name)
 			}
 		} else {
-			install(appletName)
+			install(cfg.AppletName)
 		}
 
 		return nil
@@ -56,8 +56,8 @@ func linkCmd(image string) *exec.Cmd {
 	args := []string{
 		"-s",
 		"-f",
-		dockerboxExe,
-		fmt.Sprintf("%s/%s", prefix, image),
+		cfg.DockerboxExe,
+		fmt.Sprintf("%s/%s", cfg.InstallDir, image),
 	}
 
 	return exec.Command("ln", args...)
