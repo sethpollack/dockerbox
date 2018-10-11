@@ -19,7 +19,7 @@ Add a `registry.yaml` file to `$HOME/.dockerbox/registry.yaml`
 ```yaml
 repos:
 - name: local
-  path: $PWD/.dockerbox/local.yaml
+  path: $HOME/.dockerbox/local.yaml
   type: file
 - name: example
   path: https://raw.githubusercontent.com/sethpollack/dockerbox/master/example/example.yaml
