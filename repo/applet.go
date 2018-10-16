@@ -93,7 +93,7 @@ func (a *Applet) RunCmd(extra []string) *exec.Cmd {
 		args = append(args, "--name", a.Name)
 	}
 	if a.WorkDir != "" {
-		args = append(args, "--workdir", a.WorkDir)
+		args = append(args, "--workdir", os.ExpandEnv(a.WorkDir))
 	}
 	if a.Entrypoint != "" {
 		args = append(args, "--entrypoint", a.Entrypoint)
