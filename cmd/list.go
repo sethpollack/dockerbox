@@ -18,8 +18,8 @@ var listCmd = &cobra.Command{
 		r := repo.New(cfg.RootDir)
 		r.Init()
 
-		for _, a := range r.Applets {
-			fmt.Println(a.Name)
+		for key, _ := range r.Applets {
+			fmt.Println(key)
 		}
 
 		return nil

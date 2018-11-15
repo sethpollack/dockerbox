@@ -31,8 +31,8 @@ var (
 				r := repo.New(cfg.RootDir)
 				r.Init()
 
-				for _, a := range r.Applets {
-					uninstall(a.Name)
+				for key, _ := range r.Applets {
+					uninstall(key)
 				}
 			} else {
 				uninstall(cfg.AppletName)

@@ -34,8 +34,8 @@ var installCmd = &cobra.Command{
 			r := repo.New(cfg.RootDir)
 			r.Init()
 
-			for _, a := range r.Applets {
-				install(a.Name)
+			for key, _ := range r.Applets {
+				install(key)
 			}
 		} else {
 			install(cfg.AppletName)
