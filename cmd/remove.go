@@ -6,14 +6,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: "update the repo from the registry configs",
+var removeCmd = &cobra.Command{
+	Use:   "remove",
+	Short: "Remove a repo from the registry",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		reg, err := registry.New(cfg.RootDir)
 		if err != nil {
 			return err
 		}
+
+		reg.Remove(args[0])
+		reg.Save()
 
 		r := repo.New(cfg.RootDir)
 

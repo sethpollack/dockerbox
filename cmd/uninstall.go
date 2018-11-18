@@ -12,8 +12,6 @@ import (
 var uninstallAll bool
 
 func init() {
-	rootCmd.AddCommand(uninstallCmd)
-
 	uninstallCmd.Flags().StringVarP(&cfg.AppletName, "applet", "i", "", "applet to uninstall")
 	uninstallCmd.Flags().BoolVarP(&uninstallAll, "all", "a", false, "uninstall all applets.")
 }

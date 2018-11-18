@@ -1,6 +1,6 @@
 # DockerBox
 
-dockerbox is a single executable that runs docker containers based on local and remote run configurations.
+`dockerbox` is a single executable that runs docker containers based on local and remote run configurations.
 
 ## Install
 
@@ -14,26 +14,19 @@ Add `dockerbox` to your path
 export PATH=$PATH:$HOME/.dockerbox/bin/
 ```
 
-Add a `registry.yaml` file to `$HOME/.dockerbox/registry.yaml`
+Add a remote repo to your registry
 
-```yaml
-repos:
-- name: local
-  path: $HOME/.dockerbox/local.yaml
-  type: file
-- name: example
-  path: https://raw.githubusercontent.com/sethpollack/dockerbox/master/example/example.yaml
-  type: url
+`dockerbox registry add example https://raw.githubusercontent.com/sethpollack/dockerbox/master/example/example.yaml`
+
+Add a local repo to your registry
+
 ```
-
-add a local config to `$HOME/.dockerbox/local.yaml`
-
-```yaml
+cat <<'EOF' >$HOME/.dockerbox/local.yaml
 applets:
   kubectl:
     name: kubectl
-    image: beenverifiedinc/kubectl
-    image_tag: 1.7.11
+    image: sethpollack/kubectl
+    image_tag: 1.8.4
     entrypoint: kubectl
     environment:
     - KUBECONFIG=/root/.kube/config
@@ -41,13 +34,18 @@ applets:
     - $HOME/.kube:/root/.kube
     - $PWD:/app
     work_dir: /app
+EOF
 ```
 
-To update your applet cache (`$HOME/.dockerbox/.cache.yaml`) from all the repos in the registry run `dockerbox update`.
+`dockerbox registry add local $HOME/.dockerbox/local.yaml`
 
 To see the list of available applets run `dockerbox list`
 
-And to install an applet run `dockerbox install -i <applet name>` or `dockerbox install -a` to install all available applets. `dockerbox` installs applets by creating a symlink from `$HOME/.dockerbox/<applet name>` to the dockerbox binary `$GOPATH/bin/dockerbox`.
+To update your applet cache (`$HOME/.dockerbox/.cache.yaml`) from all the repos in the registry run `dockerbox update`.
+
+To install an applet run `dockerbox install -i <applet name>` or `dockerbox install -a` to install all available applets.
+
+`dockerbox` installs applets by creating a symlink from `$HOME/.dockerbox/<applet name>` to the dockerbox binary.
 
 Full applet spec:
 
@@ -81,6 +79,16 @@ Available Commands:
   help        Help about any command
   install     install docker applet
   list        list all available applets in the repo
+  registry
   uninstall   uninstall docker applet
   update      update the repo from the registry configs
+  version
+```
+```
+Usage:
+  dockerbox registry [command]
+
+Available Commands:
+  add         Add or update a repo in the registry.
+  remove      Remove a repo from the registry
 ```

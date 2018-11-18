@@ -21,6 +21,15 @@ var (
 	}
 )
 
+func init() {
+	rootCmd.AddCommand(updateCmd)
+	rootCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(installCmd)
+	rootCmd.AddCommand(uninstallCmd)
+	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(registryCmd)
+}
+
 func Execute(conf Config) {
 	cfg = conf
 	if err := rootCmd.Execute(); err != nil {

@@ -13,7 +13,6 @@ import (
 var installAll bool
 
 func init() {
-	rootCmd.AddCommand(installCmd)
 	installCmd.Flags().StringVarP(&cfg.AppletName, "applet", "i", "", "applet to install")
 	installCmd.Flags().BoolVarP(&installAll, "all", "a", false, "install all applets.")
 }

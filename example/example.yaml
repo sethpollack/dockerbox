@@ -1,9 +1,14 @@
 applets:
-  bazel:
-    name: bazel
-    image: beenverifiedinc/bazelbuild
-    image_tag: latest
-    entrypoint: bazel
+  terraform:
+    name: terraform
+    image: hashicorp/terraform
+    image_tag: 0.11.8
+    environment:
+    - AWS_KEYPAIR=${AWS_KEYPAIR}
+    - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+    - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+    - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
     volumes:
-    - $PWD:/app
-    work_dir: /app
+    - $HOME:/$HOME
+    work_dir: $PWD
+    entrypoint: terraform
