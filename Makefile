@@ -1,4 +1,4 @@
-VERSION=v1.1.3
+VERSION=v1.2.0
 
 .PHONY: release
 release: tag build_darwin build_linux
