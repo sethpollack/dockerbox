@@ -6,7 +6,7 @@ import (
 	"os/exec"
 )
 
-const dockerExe = "/usr/local/bin/docker"
+const dockerExe = "docker"
 
 type Applet struct {
 	Name       string `yaml:"name"`
