@@ -4,24 +4,29 @@
 
 ## Install
 
+```
+$ go get github.com/sethpollack/dockerbox
+```
+
 > By default dockerbox configuration files live in `$HOME/.dockerbox/` and binaries are installed at `$HOME/.dockerbox/bin/`. To override these defaults you can set the following environment variables `DOCKERBOX_ROOT_DIR` and `DOCKERBOX_INSTALL_DIR`.
 
-`go get github.com/sethpollack/dockerbox`
 
-Add `dockerbox` to your path
+Add `dockerbox` to your path:
 
 ```
 export PATH=$HOME/.dockerbox/bin/:$PATH
 ```
 
-Add a remote repo to your registry
-
-`dockerbox registry add example https://raw.githubusercontent.com/sethpollack/dockerbox/master/example/example.yaml`
-
-Add a local repo to your registry
+Add a remote repo to your registry:
 
 ```
-cat <<'EOF' >$HOME/.dockerbox/local.yaml
+$ dockerbox registry add example https://raw.githubusercontent.com/sethpollack/dockerbox/master/example/example.yaml
+```
+
+Create a local repo:
+
+```
+cat <<'EOF' >$HOME/.dockerbox/k8s.yaml
 applets:
   kubectl:
     name: kubectl
@@ -37,15 +42,41 @@ applets:
 EOF
 ```
 
-`dockerbox registry add local $HOME/.dockerbox/local.yaml`
+Add it to your registry:
 
-To see the list of available applets run `dockerbox list`
+```
+dockerbox registry add k8s $HOME/.dockerbox/k8s.yaml
+```
 
-To update your applet cache (`$HOME/.dockerbox/.cache.yaml`) from all the repos in the registry run `dockerbox update`.
+Update your applet cache (`$HOME/.dockerbox/.cache.yaml`) from all the repos in the registry:
 
-To install an applet run `dockerbox install -i <applet name>` or `dockerbox install -a` to install all available applets.
+```
+$ dockerbox update
+```
 
-`dockerbox` installs applets by creating a symlink from `$HOME/.dockerbox/<applet name>` to the dockerbox binary.
+Check which applets are available:
+
+```
+$ dockerbox list
+kubectl:1.8.4
+terraform:0.11.8
+```
+
+Install an applet with `dockerbox install -i <applet name>` or `dockerbox install -a` to install all available applets.
+
+```
+$ dockerbox install -i kubectl
+$ which kubectl
+/Users/seth/.dockerbox/bin/kubectl
+```
+
+`dockerbox` installs applets by creating a symlink from `$HOME/.dockerbox/bin/<applet name>` to the dockerbox binary.
+
+```
+$ ls -l $HOME/.dockerbox/bin
+kubectl -> /Users/seth/go/bin/dockerbox
+terraform -> /Users/seth/go/bin/dockerbox
+```
 
 Full applet spec:
 
