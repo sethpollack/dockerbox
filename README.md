@@ -14,7 +14,7 @@ $ go get github.com/sethpollack/dockerbox
 Add `dockerbox` to your path:
 
 ```
-export PATH=$HOME/.dockerbox/bin/:$PATH
+$ export PATH=$HOME/.dockerbox/bin/:$PATH
 ```
 
 Add a remote repo to your registry:
