@@ -11,7 +11,7 @@
 Add `dockerbox` to your path
 
 ```
-export PATH=$PATH:$HOME/.dockerbox/bin/
+export PATH=$HOME/.dockerbox/bin/:$PATH
 ```
 
 Add a remote repo to your registry
