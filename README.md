@@ -26,7 +26,7 @@ $ dockerbox registry add example https://raw.githubusercontent.com/sethpollack/d
 Create a local repo:
 
 ```
-cat <<'EOF' >$HOME/.dockerbox/k8s.yaml
+$ cat <<'EOF' >$HOME/.dockerbox/k8s.yaml
 applets:
   kubectl:
     name: kubectl
@@ -45,7 +45,7 @@ EOF
 Add it to your registry:
 
 ```
-dockerbox registry add k8s $HOME/.dockerbox/k8s.yaml
+$ dockerbox registry add k8s $HOME/.dockerbox/k8s.yaml
 ```
 
 Update your applet cache (`$HOME/.dockerbox/.cache.yaml`) from all the repos in the registry:
