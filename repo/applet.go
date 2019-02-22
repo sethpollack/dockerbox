@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
+
 	"golang.org/x/crypto/ssh/terminal"
 )
 
@@ -15,6 +17,7 @@ type Applet struct {
 	Entrypoint string `yaml:"entrypoint"`
 	Restart    string `yaml:"restart"`
 	Network    string `yaml:"network"`
+	EnvFilter  string `yaml:"env_filter"`
 
 	RM          bool `yaml:"rm"`
 	TTY         bool `yaml:"tty"`
@@ -22,6 +25,7 @@ type Applet struct {
 	Privileged  bool `yaml:"privileged"`
 	Detach      bool `yaml:"detach"`
 	Kill        bool `yaml:"kill"`
+	AllEnvs     bool `yaml:"all_envs"`
 
 	Env          []string `yaml:"environment"`
 	Volumes      []string `yaml:"volumes"`
@@ -125,7 +129,13 @@ func (a *Applet) RunCmd(extra []string) *exec.Cmd {
 	if !isTTY() && a.TTY {
 		args = append(args, "--tty")
 	}
-
+	if a.AllEnvs {
+		for _, f := range os.Environ() {
+			if matched, _ := regexp.MatchString(a.EnvFilter, f); matched {
+				args = append(args, "-e", f)
+			}
+		}
+	}
 	for _, f := range a.Env {
 		args = append(args, "-e", os.ExpandEnv(f))
 	}
