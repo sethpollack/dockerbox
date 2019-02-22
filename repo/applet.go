@@ -65,7 +65,7 @@ func (a *Applet) PreExec() {
 }
 
 func isTTY() bool {
-	return terminal.IsTerminal(int(os.Stdout.Fd()))
+	return terminal.IsTerminal(int(os.Stdin.Fd()))
 }
 
 func (a *Applet) UnmarshalYAML(unmarshal func(interface{}) error) error {
@@ -126,7 +126,7 @@ func (a *Applet) RunCmd(extra []string) *exec.Cmd {
 	if a.Detach {
 		args = append(args, "--detach")
 	}
-	if !isTTY() && a.TTY {
+	if isTTY() && a.TTY {
 		args = append(args, "--tty")
 	}
 	if a.AllEnvs {
