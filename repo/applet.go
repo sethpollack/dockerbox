@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 const dockerExe = "docker"
@@ -57,6 +58,10 @@ func (a *Applet) PreExec() {
 	if err != nil {
 		fmt.Printf("error killing %s: %v", a.Name, err)
 	}
+}
+
+func isTTY() bool {
+	return terminal.IsTerminal(int(os.Stdout.Fd()))
 }
 
 func (a *Applet) UnmarshalYAML(unmarshal func(interface{}) error) error {
@@ -117,7 +122,7 @@ func (a *Applet) RunCmd(extra []string) *exec.Cmd {
 	if a.Detach {
 		args = append(args, "--detach")
 	}
-	if a.TTY {
+	if !isTTY() && a.TTY {
 		args = append(args, "--tty")
 	}
 
