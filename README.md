@@ -95,6 +95,8 @@ Full applet spec:
 - `volumes` list
 - `ports` list
 - `env_file` list
+- `all_envs` bool (loads all local environment variables)
+- `env_filter` string (regex to filter environment variables when using `all_envs`)
 - `dependencies` list (list of applets to run first)
 - `links` list
 - `image` string
