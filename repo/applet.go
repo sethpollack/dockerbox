@@ -154,9 +154,11 @@ func (a *Applet) RunCmd(extra []string) *exec.Cmd {
 
 	args = append(args, fmt.Sprintf("%s:%s", a.Image, a.Tag))
 
-	if len(a.Command) != 0 && len(extra) == 0 {
+	if len(a.Command) != 0 {
 		args = append(args, a.Command...)
-	} else {
+	}
+
+	if len(extra) != 0 {
 		args = append(args, extra...)
 	}
 
