@@ -54,14 +54,7 @@ func (a *Applet) Exec(extra ...string) error {
 }
 
 func (a *Applet) PreExec() {
-	cmd := a.KillCmd()
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	err := cmd.Run()
-	if err != nil {
-		fmt.Printf("error killing %s: %v", a.Name, err)
-	}
+	a.KillCmd().Run()
 }
 
 func isTTY() bool {
