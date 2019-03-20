@@ -110,14 +110,14 @@ func (a *Applet) RunCmd(extra []string) *exec.Cmd {
 	if a.RM {
 		args = append(args, "--rm")
 	}
-	if a.Interactive {
-		args = append(args, "--interactive")
-	}
 	if a.Privileged {
 		args = append(args, "--privileged")
 	}
 	if a.Detach {
 		args = append(args, "--detach")
+	}
+	if isTTY() && a.Interactive {
+		args = append(args, "--interactive")
 	}
 	if isTTY() && a.TTY {
 		args = append(args, "--tty")
