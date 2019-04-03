@@ -32,6 +32,8 @@ type Applet struct {
 	Ports        []string `yaml:"ports"`
 	EnvFile      []string `yaml:"env_file"`
 	Dependencies []string `yaml:"dependencies"`
+	BeforeHooks  []string `yaml:"before_hooks"`
+	AfterHooks   []string `yaml:"after_hooks"`
 	Links        []string `yaml:"links"`
 
 	Image string `yaml:"image"`
@@ -72,6 +74,9 @@ func (a *Applet) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if err := unmarshal(&raw); err != nil {
 		return err
 	}
+
+	raw.BeforeHooks = append(raw.Dependencies, raw.BeforeHooks...)
+	raw.Dependencies = nil
 
 	*a = Applet(raw)
 	return nil

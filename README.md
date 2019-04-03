@@ -97,7 +97,9 @@ Full applet spec:
 - `env_file` list
 - `all_envs` bool (loads all local environment variables)
 - `env_filter` string (regex to filter environment variables when using `all_envs`)
-- `dependencies` list (list of applets to run first)
+- `dependencies` (deprecated - use `before_hooks` instead)
+- `before_hooks` list (list of applets to run first)
+- `after_hooks` list (list of applets to run after)
 - `links` list
 - `image` string
 - `image_tag` string

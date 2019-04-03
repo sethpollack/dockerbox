@@ -46,12 +46,16 @@ func main() {
 			a.PreExec()
 		}
 
-		Exec(r, a, args...)
+		err := Exec(r, a, args...)
+		if err != nil {
+			fmt.Print(err)
+			os.Exit(1)
+		}
 	}
 }
 
 func Exec(r *repo.Repo, a repo.Applet, args ...string) error {
-	for _, dep := range a.Dependencies {
+	for _, dep := range a.BeforeHooks {
 		d, ok := r.Applets[dep]
 		if !ok {
 			return fmt.Errorf("dependency %s not found", dep)
@@ -62,5 +66,21 @@ func Exec(r *repo.Repo, a repo.Applet, args ...string) error {
 		}
 	}
 
-	return a.Exec(args...)
+	err := a.Exec(args...)
+	if err != nil {
+		return err
+	}
+
+	for _, dep := range a.AfterHooks {
+		d, ok := r.Applets[dep]
+		if !ok {
+			return fmt.Errorf("dependency %s not found", dep)
+		}
+		err := Exec(r, d)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
