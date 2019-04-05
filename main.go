@@ -66,10 +66,7 @@ func Exec(r *repo.Repo, a repo.Applet, args ...string) error {
 		}
 	}
 
-	err := a.Exec(args...)
-	if err != nil {
-		return err
-	}
+	a.Exec(args...)
 
 	for _, dep := range a.AfterHooks {
 		d, ok := r.Applets[dep]
