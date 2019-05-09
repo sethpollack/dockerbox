@@ -18,6 +18,7 @@ type Applet struct {
 	Restart    string `yaml:"restart"`
 	Network    string `yaml:"network"`
 	EnvFilter  string `yaml:"env_filter"`
+	Hostname   string `yaml:"hostname"`
 
 	RM          bool `yaml:"rm"`
 	TTY         bool `yaml:"tty"`
@@ -27,6 +28,9 @@ type Applet struct {
 	Kill        bool `yaml:"kill"`
 	AllEnvs     bool `yaml:"all_envs"`
 
+	DNS          []string `yaml:"dns"`
+	DNSSearch    []string `yaml:"dns_search"`
+	DNSOption    []string `yaml:"dns_option"`
 	Env          []string `yaml:"environment"`
 	Volumes      []string `yaml:"volumes"`
 	Ports        []string `yaml:"ports"`
@@ -111,6 +115,9 @@ func (a *Applet) RunCmd(extra []string) *exec.Cmd {
 	if a.Network != "" {
 		args = append(args, "--network", a.Network)
 	}
+	if a.Hostname != "" {
+		args = append(args, "--hostname", a.Hostname)
+	}
 
 	if a.RM {
 		args = append(args, "--rm")
@@ -133,6 +140,15 @@ func (a *Applet) RunCmd(extra []string) *exec.Cmd {
 				args = append(args, "-e", f)
 			}
 		}
+	}
+	for _, f := range a.DNS {
+		args = append(args, "--dns", f)
+	}
+	for _, f := range a.DNSSearch {
+		args = append(args, "--dns-search", f)
+	}
+	for _, f := range a.DNSOption {
+		args = append(args, "--dns-option", f)
 	}
 	for _, f := range a.Env {
 		args = append(args, "-e", os.ExpandEnv(f))
