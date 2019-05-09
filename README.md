@@ -85,12 +85,16 @@ Full applet spec:
 - `entrypoint` string
 - `restart` string
 - `network` string
+- `hostname` string
 - `rm` bool (defaults true)
 - `tty` bool (defaults true)
 - `interactive` bool (defaults true)
 - `privileged` bool
 - `detach` bool
 - `kill` bool (kills running container with the same name before running)
+- `dns` list
+- `dns_search` list
+- `dns_option` list
 - `environment` list
 - `volumes` list
 - `ports` list
