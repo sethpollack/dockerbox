@@ -121,7 +121,7 @@ func (a *Applet) RunCmd(extra []string) *exec.Cmd {
 	if a.Detach {
 		args = append(args, "--detach")
 	}
-	if isTTY() && a.Interactive {
+	if a.Interactive {
 		args = append(args, "--interactive")
 	}
 	if isTTY() && a.TTY {
