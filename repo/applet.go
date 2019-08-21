@@ -27,6 +27,7 @@ type Applet struct {
 	Detach      bool `yaml:"detach"`
 	Kill        bool `yaml:"kill"`
 	AllEnvs     bool `yaml:"all_envs"`
+	Pull        bool `yaml:"pull"`
 
 	DNS          []string `yaml:"dns"`
 	DNSSearch    []string `yaml:"dns_search"`
@@ -60,7 +61,12 @@ func (a *Applet) Exec(extra ...string) error {
 }
 
 func (a *Applet) PreExec() {
-	a.KillCmd().Run()
+	if a.Kill {
+		a.KillCmd().Run()
+	}
+	if a.Pull {
+		a.PullCmd().Run()
+	}
 }
 
 func isTTY() bool {
@@ -91,7 +97,14 @@ func (a *Applet) KillCmd() *exec.Cmd {
 		"kill",
 		a.Name,
 	}
+	return exec.Command(dockerExe, args...)
+}
 
+func (a *Applet) PullCmd() *exec.Cmd {
+	args := []string{
+		"pull",
+		fmt.Sprintf("%s:%s", a.Image, a.Tag),
+	}
 	return exec.Command(dockerExe, args...)
 }
 

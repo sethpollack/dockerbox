@@ -42,9 +42,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		if a.Kill {
-			a.PreExec()
-		}
+		a.PreExec()
 
 		err := Exec(r, a, args...)
 		if err != nil {

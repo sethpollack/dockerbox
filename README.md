@@ -92,6 +92,7 @@ Full applet spec:
 - `privileged` bool
 - `detach` bool
 - `kill` bool (kills running container with the same name before running)
+- `pull` bool (pulls image before running)
 - `dns` list
 - `dns_search` list
 - `dns_option` list
