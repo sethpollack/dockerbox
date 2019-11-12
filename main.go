@@ -17,6 +17,7 @@ func main() {
 
 	rootDir := io.GetEnv("DOCKERBOX_ROOT_DIR", "$HOME/.dockerbox")
 	installDir := io.GetEnv("DOCKERBOX_INSTALL_DIR", rootDir+"/bin")
+	separator := io.GetEnv("DOCKERBOX_SEPARATOR", "--")
 
 	exe, _ := os.Executable()
 
@@ -49,7 +50,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		dArgs, aArgs := splitArgs(args)
+		dArgs, aArgs := splitArgs(separator, args)
 		err = fs.Parse(dArgs)
 		if err != nil {
 			fmt.Print(err)
@@ -94,9 +95,9 @@ func Exec(r *repo.Repo, a repo.Applet, args ...string) error {
 	return nil
 }
 
-func splitArgs(args []string) ([]string, []string) {
+func splitArgs(separator string, args []string) ([]string, []string) {
 	for i, arg := range args {
-		if arg == "--" {
+		if arg == separator {
 			return args[:i], args[i+1:]
 		}
 	}
