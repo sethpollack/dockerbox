@@ -12,39 +12,37 @@ import (
 const dockerExe = "docker"
 
 type Applet struct {
-	Name       string `yaml:"name"`
-	WorkDir    string `yaml:"work_dir"`
-	Entrypoint string `yaml:"entrypoint"`
-	Restart    string `yaml:"restart"`
-	Network    string `yaml:"network"`
-	EnvFilter  string `yaml:"env_filter"`
-	Hostname   string `yaml:"hostname"`
+	Name       string `yaml:"name" flag:"name" desc:"Assign a name to the container"`
+	WorkDir    string `yaml:"work_dir" flag:"workdir w" desc:"Working directory inside the container"`
+	Entrypoint string `yaml:"entrypoint" flag:"entrypoint" desc:"Overwrite the default ENTRYPOINT of the image"`
+	Restart    string `yaml:"restart" flag:"restart" desc:"Restart policy to apply when a container exits (default \no\")"`
+	Network    string `yaml:"network" flag:"network" desc:"Connect a container to a network"`
+	EnvFilter  string `yaml:"env_filter" flag:"env-filter" desc:"Filter env vars passed to container from --all-envs"`
+	Hostname   string `yaml:"hostname" flag:"hostname" desc:"Container host name"`
+	Image      string `yaml:"image" flag:"image" desc:"Container image"`
+	Tag        string `yaml:"image_tag" flag:"tag" desc:"Container image tag"`
 
-	RM          bool `yaml:"rm"`
-	TTY         bool `yaml:"tty"`
-	Interactive bool `yaml:"interactive"`
-	Privileged  bool `yaml:"privileged"`
-	Detach      bool `yaml:"detach"`
-	Kill        bool `yaml:"kill"`
-	AllEnvs     bool `yaml:"all_envs"`
-	Pull        bool `yaml:"pull"`
+	RM          bool `yaml:"rm" flag:"rm" desc:"Automatically remove the container when it exits"`
+	TTY         bool `yaml:"tty" flag:"tty t" desc:"Allocate a pseudo-TTY"`
+	Interactive bool `yaml:"interactive" flag:"interactive i" desc:"Keep STDIN open even if not attached"`
+	Privileged  bool `yaml:"privileged" flag:"privileged" desc:"Give extended privileges to this container"`
+	Detach      bool `yaml:"detach" flag:"detach d" desc:"Run container in background and print container ID"`
+	Kill        bool `yaml:"kill" flag:"kill" desc:"Kill previous run on container with same name"`
+	AllEnvs     bool `yaml:"all_envs" flag:"all-envs" desc:"Pass all envars to container"`
+	Pull        bool `yaml:"pull" flag:"pull" desc:"Pull image before running it"`
 
-	DNS          []string `yaml:"dns"`
-	DNSSearch    []string `yaml:"dns_search"`
-	DNSOption    []string `yaml:"dns_option"`
-	Env          []string `yaml:"environment"`
-	Volumes      []string `yaml:"volumes"`
-	Ports        []string `yaml:"ports"`
-	EnvFile      []string `yaml:"env_file"`
-	Dependencies []string `yaml:"dependencies"`
-	BeforeHooks  []string `yaml:"before_hooks"`
-	AfterHooks   []string `yaml:"after_hooks"`
-	Links        []string `yaml:"links"`
-
-	Image string `yaml:"image"`
-	Tag   string `yaml:"image_tag"`
-
-	Command []string `yaml:"command"`
+	DNS          []string `yaml:"dns" flag:"dns" desc:"Set custom DNS servers"`
+	DNSSearch    []string `yaml:"dns_search" flag:"dns-search" desc:"Set custom DNS search domains"`
+	DNSOption    []string `yaml:"dns_option" flag:"dns-option" desc:"Set DNS options"`
+	Env          []string `yaml:"environment" flag:"environment e" desc:"Set environment variables"`
+	Volumes      []string `yaml:"volumes" flag:"volume v" desc:"Bind mount a volume"`
+	Ports        []string `yaml:"ports" flag:"publish p" desc:"Publish a container's port(s) to the host"`
+	EnvFile      []string `yaml:"env_file" flag:"env-file" desc:"Read in a file of environment variables"`
+	Dependencies []string `yaml:"dependencies" flag:"dependency" desc:"Run container before"`
+	BeforeHooks  []string `yaml:"before_hooks" flag:"before-hook" desc:"Run container before."`
+	AfterHooks   []string `yaml:"after_hooks" flag:"after-hook" desc:"Run container after"`
+	Links        []string `yaml:"links" flag:"link" desc:"Add link to another container"`
+	Command      []string `yaml:"command" flag:"command" desc:"Command to run in container"`
 }
 
 func (a *Applet) Exec(extra ...string) error {
