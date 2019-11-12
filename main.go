@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/octago/sflags/gen/gpflag"
 	"github.com/sethpollack/dockerbox/cmd"
 	"github.com/sethpollack/dockerbox/io"
 	"github.com/sethpollack/dockerbox/repo"
@@ -42,9 +43,22 @@ func main() {
 			os.Exit(1)
 		}
 
+		fs, err := gpflag.Parse(&a)
+		if err != nil {
+			fmt.Print(err)
+			os.Exit(1)
+		}
+
+		dArgs, aArgs := splitArgs(args)
+		err = fs.Parse(dArgs)
+		if err != nil {
+			fmt.Print(err)
+			os.Exit(1)
+		}
+
 		a.PreExec()
 
-		err := Exec(r, a, args...)
+		err = Exec(r, a, aArgs...)
 		if err != nil {
 			fmt.Print(err)
 			os.Exit(1)
@@ -78,4 +92,13 @@ func Exec(r *repo.Repo, a repo.Applet, args ...string) error {
 	}
 
 	return nil
+}
+
+func splitArgs(args []string) ([]string, []string) {
+	for i, arg := range args {
+		if arg == "--" {
+			return args[:i], args[i+1:]
+		}
+	}
+	return []string{}, args
 }
