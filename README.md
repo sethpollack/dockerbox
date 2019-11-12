@@ -110,6 +110,40 @@ Full applet spec:
 - `image_tag` string
 - `command` list
 
+You can also overide an applets settings at runtime with flags followed by a seperator. The default seperator is `--` and can be configured with the `DOCKERBOX_SEPARATOR` environment variable.
+
+```
+    --after-hook strings    Run container after
+    --all-envs              Pass all envars to container
+    --before-hook strings   Run container before
+    --command strings       Command to run in container
+    --dependency strings    Run container before
+-d, --detach                Run container in background and print container ID
+    --dns strings           Set custom DNS servers
+    --dns-option strings    Set DNS options
+    --dns-search strings    Set custom DNS search domains
+    --entrypoint string     Overwrite the default ENTRYPOINT of the image
+    --env-file strings      Read in a file of environment variables
+    --env-filter string     Filter env vars passed to container from --all-envs
+-e, --environment strings   Set environment variables
+    --hostname string       Container host name
+    --image string          Container image
+-i, --interactive           Keep STDIN open even if not attached
+    --kill                  Kill previous run on container with same name
+    --link strings          Add link to another container
+    --name string           Assign a name to the container
+    --network string        Connect a container to a network
+    --privileged            Give extended privileges to this container
+-p, --publish strings       Publish a container's port(s) to the host
+    --pull                  Pull image before running it
+    --restart string        Restart policy to apply when a container exits
+    --rm                    Automatically remove the container when it exits
+    --tag string            Container image tag
+-t, --tty                   Allocate a pseudo-TTY
+-v, --volume strings        Bind mount a volume
+-w, --workdir string
+```
+
 ## Usage
 ```
 Usage:
