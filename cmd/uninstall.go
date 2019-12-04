@@ -9,15 +9,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var uninstallAll bool
-
-func init() {
-	uninstallCmd.Flags().StringVarP(&cfg.AppletName, "applet", "i", "", "applet to uninstall")
-	uninstallCmd.Flags().BoolVarP(&uninstallAll, "all", "a", false, "uninstall all applets.")
-}
-
-var (
-	uninstallCmd = &cobra.Command{
+func newUninstallCmd(cfg Config) *cobra.Command {
+	var uninstallAll bool
+	cmd := &cobra.Command{
 		Use:   "uninstall",
 		Short: "uninstall docker applet",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -30,28 +24,28 @@ var (
 				r.Init()
 
 				for key, _ := range r.Applets {
-					uninstall(key)
+					uninstall(cfg.InstallDir, key)
 				}
 			} else {
-				uninstall(cfg.AppletName)
+				uninstall(cfg.InstallDir, cfg.AppletName)
 			}
 
 			return nil
 		},
 	}
-)
 
-func uninstall(image string) {
-	cmd := unlinkCmd(image)
+	cmd.Flags().StringVarP(&cfg.AppletName, "applet", "i", "", "applet to uninstall")
+	cmd.Flags().BoolVarP(&uninstallAll, "all", "a", false, "uninstall all applets.")
+
+	return cmd
+}
+
+func uninstall(installDir, image string) {
+	args := []string{
+		fmt.Sprintf("%s/%s", installDir, image),
+	}
+	cmd := exec.Command("rm", args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-}
-
-func unlinkCmd(image string) *exec.Cmd {
-	args := []string{
-		fmt.Sprintf("%s/%s", cfg.InstallDir, image),
-	}
-
-	return exec.Command("rm", args...)
 }

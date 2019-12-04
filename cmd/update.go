@@ -6,22 +6,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: "update the repo from the registry configs",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		reg, err := registry.New(cfg.RootDir)
-		if err != nil {
-			return err
-		}
+func newUpdateCmd(cfg Config) *cobra.Command {
+	return &cobra.Command{
+		Use:   "update",
+		Short: "update the repo from the registry configs",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			reg, err := registry.New(cfg.RootDir)
+			if err != nil {
+				return err
+			}
 
-		r := repo.New(cfg.RootDir)
+			r := repo.New(cfg.RootDir)
 
-		r.Update(reg)
-		if err != nil {
-			return err
-		}
+			r.Update(reg)
+			if err != nil {
+				return err
+			}
 
-		return nil
-	},
+			return nil
+		},
+	}
 }

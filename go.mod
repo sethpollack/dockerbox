@@ -3,6 +3,7 @@ module github.com/sethpollack/dockerbox
 go 1.12
 
 require (
+	github.com/dlclark/regexp2 v1.2.0
 	github.com/inconshreveable/mousetrap v1.0.0
 	github.com/octago/sflags v0.2.0
 	github.com/spf13/cobra v0.0.1

@@ -4,11 +4,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	registryCmd.AddCommand(addCmd)
-	registryCmd.AddCommand(removeCmd)
-}
-
-var registryCmd = &cobra.Command{
-	Use: "registry",
+func newRegistryCmd(cfg Config) *cobra.Command {
+	cmd := &cobra.Command{
+		Use: "registry",
+	}
+	cmd.AddCommand(
+		newAddCmd(cfg),
+		newRemoveCmd(cfg),
+	)
+	return cmd
 }
