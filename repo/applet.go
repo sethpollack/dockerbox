@@ -22,14 +22,15 @@ type Applet struct {
 	Image      string `yaml:"image" flag:"image" desc:"Container image"`
 	Tag        string `yaml:"image_tag" flag:"tag" desc:"Container image tag"`
 
-	RM          bool `yaml:"rm" flag:"rm" desc:"Automatically remove the container when it exits"`
-	TTY         bool `yaml:"tty" flag:"tty t" desc:"Allocate a pseudo-TTY"`
-	Interactive bool `yaml:"interactive" flag:"interactive i" desc:"Keep STDIN open even if not attached"`
-	Privileged  bool `yaml:"privileged" flag:"privileged" desc:"Give extended privileges to this container"`
-	Detach      bool `yaml:"detach" flag:"detach d" desc:"Run container in background and print container ID"`
-	Kill        bool `yaml:"kill" flag:"kill" desc:"Kill previous run on container with same name"`
-	AllEnvs     bool `yaml:"all_envs" flag:"all-envs" desc:"Pass all envars to container"`
-	Pull        bool `yaml:"pull" flag:"pull" desc:"Pull image before running it"`
+	RM               bool `yaml:"rm" flag:"rm" desc:"Automatically remove the container when it exits"`
+	TTY              bool `yaml:"tty" flag:"tty t" desc:"Allocate a pseudo-TTY"`
+	Interactive      bool `yaml:"interactive" flag:"interactive i" desc:"Keep STDIN open even if not attached"`
+	Privileged       bool `yaml:"privileged" flag:"privileged" desc:"Give extended privileges to this container"`
+	Detach           bool `yaml:"detach" flag:"detach d" desc:"Run container in background and print container ID"`
+	Kill             bool `yaml:"kill" flag:"kill" desc:"Kill previous run on container with same name"`
+	AllEnvs          bool `yaml:"all_envs" flag:"all-envs" desc:"Pass all envars to container"`
+	Pull             bool `yaml:"pull" flag:"pull" desc:"Pull image before running it"`
+	InverseEnvFilter bool `yaml:"inverse" flag:"inverse" desc:"Inverse env-filter"`
 
 	DNS          []string `yaml:"dns" flag:"dns" desc:"Set custom DNS servers"`
 	DNSSearch    []string `yaml:"dns_search" flag:"dns-search" desc:"Set custom DNS search domains"`
@@ -147,7 +148,7 @@ func (a *Applet) RunCmd(extra []string) *exec.Cmd {
 	}
 	if a.AllEnvs {
 		for _, f := range os.Environ() {
-			if matched, _ := regexp.MatchString(a.EnvFilter, f); matched {
+			if matched, _ := regexp.MatchString(a.EnvFilter, f); a.InverseEnvFilter != matched {
 				args = append(args, "-e", f)
 			}
 		}
