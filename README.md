@@ -1,6 +1,17 @@
 # DockerBox
 
-`dockerbox` is a single executable that runs docker containers based on local and remote run configurations.
+`dockerbox` is a tool that allows you to run command line tools using Docker instead of native binaries. It works by symlinking commands to the Dockerbox binary, which then looks up the `docker run` configuration and executes the `docker run command` for you.
+
+Dockerbox uses configuration files written in Cuelang (https://cuelang.org/) for specifying the Docker run configuration. The root schema for the configuration files contains the following fields:
+
+`environ: [string]: string` - This field is automatically populated with the host's environment variables at runtime.
+`applets: [string]: #Applet` - This field is used to configure the applets.
+`ignore:  [string]: #Applet` - This field is used to instruct dockerbox to skip certain applets when running the dockerbox install command.
+
+`dockerbox` will look for configuration files by walking the path of your current directory and unifying all of the files.
+
+> File names are arbitrary, but must end in `.dbx.cue`.
+
 
 ## Install
 
@@ -8,64 +19,26 @@
 $ go get github.com/sethpollack/dockerbox
 ```
 
-> By default dockerbox configuration files live in `$HOME/.dockerbox/` and binaries are installed at `$HOME/.dockerbox/bin/`. To override these defaults you can set the following environment variables `DOCKERBOX_ROOT_DIR` and `DOCKERBOX_INSTALL_DIR`.
+> By default dockerbox binaries are installed at `$HOME/.dockerbox/bin/`. To override you can set the following environment variable `DOCKERBOX_INSTALL_DIR`.
 
-
-Add `dockerbox` to your path:
-
-```
-$ export PATH=$HOME/.dockerbox/bin/:$PATH
-```
-
-Add a remote repo to your registry:
+Then add `dockerbox` to your path:
 
 ```
-$ dockerbox registry add example https://raw.githubusercontent.com/sethpollack/dockerbox/master/example/example.yaml
+$ export PATH=$DOCKERBOX_INSTALL_DIR:$PATH
 ```
 
-Create a local repo:
+To prevent the installation of an applet, add it to the ignore list in any of your configuration files.
 
 ```
-$ cat <<'EOF' >$HOME/.dockerbox/k8s.yaml
-applets:
-  kubectl:
-    name: kubectl
-    image: sethpollack/kubectl
-    image_tag: 1.8.4
-    entrypoint: kubectl
-    environment:
-    - KUBECONFIG=/root/.kube/config
-    volumes:
-    - $HOME/.kube:/root/.kube
-    - $PWD:/app
-    work_dir: /app
+$ cat <<'EOF' >$HOME/.ignore.dbx.cue
+ignore: [applets.kubectl]
 EOF
 ```
 
-Add it to your registry:
+Install applets with `dockerbox install`.
 
 ```
-$ dockerbox registry add k8s $HOME/.dockerbox/k8s.yaml
-```
-
-Update your applet cache (`$HOME/.dockerbox/.cache.yaml`) from all the repos in the registry:
-
-```
-$ dockerbox update
-```
-
-Check which applets are available:
-
-```
-$ dockerbox list
-kubectl:1.8.4
-terraform:0.11.8
-```
-
-Install an applet with `dockerbox install -i <applet name>` or `dockerbox install -a` to install all available applets.
-
-```
-$ dockerbox install -i kubectl
+$ dockerbox install
 $ which kubectl
 /Users/seth/.dockerbox/bin/kubectl
 ```
@@ -78,39 +51,9 @@ kubectl -> /Users/seth/go/bin/dockerbox
 terraform -> /Users/seth/go/bin/dockerbox
 ```
 
-Full applet spec:
+Full schema can be found [here](github.com/sethpollack/dockerbox/blob/master/cue/schema.cue).
 
-- `name` string
-- `work_dir` string
-- `entrypoint` string
-- `restart` string
-- `network` string
-- `hostname` string
-- `rm` bool (defaults true)
-- `tty` bool (defaults true)
-- `interactive` bool (defaults true)
-- `privileged` bool
-- `detach` bool
-- `kill` bool (kills running container with the same name before running)
-- `pull` bool (pulls image before running)
-- `dns` list
-- `dns_search` list
-- `dns_option` list
-- `environment` list
-- `volumes` list
-- `ports` list
-- `env_file` list
-- `all_envs` bool (loads all local environment variables)
-- `env_filter` string (regex to filter environment variables when using `all_envs`)
-- `dependencies` (deprecated - use `before_hooks` instead)
-- `before_hooks` list (list of applets to run first)
-- `after_hooks` list (list of applets to run after)
-- `links` list
-- `image` string
-- `image_tag` string
-- `command` list
-
-You can also overide an applets settings at runtime with flags followed by a seperator. The default seperator is `--` and can be configured with the `DOCKERBOX_SEPARATOR` environment variable.
+You can also overide an applets settings at runtime with flags followed by a separator. The default separator is `--` and can be configured with the `DOCKERBOX_SEPARATOR` environment variable.
 
 ```
       --after-hook strings    Run container after
@@ -153,17 +96,6 @@ Usage:
 Available Commands:
   help        Help about any command
   install     install docker applet
-  list        list all available applets in the repo
-  registry
   uninstall   uninstall docker applet
-  update      update the repo from the registry configs
   version
-```
-```
-Usage:
-  dockerbox registry [command]
-
-Available Commands:
-  add         Add or update a repo in the registry.
-  remove      Remove a repo from the registry
 ```

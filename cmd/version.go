@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newVersionCmd(cfg Config) *cobra.Command {
+func newVersionCmd() *cobra.Command {
 	return &cobra.Command{
 		Use: "version",
 		Run: func(cmd *cobra.Command, args []string) {

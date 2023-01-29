@@ -1,27 +1,22 @@
 package cmd
 
 import (
+	"github.com/sethpollack/dockerbox/applet"
+	"github.com/sethpollack/dockerbox/dockerbox"
 	"github.com/spf13/cobra"
 )
 
-type Config struct {
-	AppletName   string
-	RootDir      string
-	InstallDir   string
-	DockerboxExe string
-}
-
-func NewRootCmd(cfg Config) *cobra.Command {
+func NewRootCmd(cfg *dockerbox.Config, root *applet.Root) (*cobra.Command, error) {
 	cmd := &cobra.Command{
 		Use: "dockerbox",
 	}
+
 	cmd.AddCommand(
-		newUpdateCmd(cfg),
-		newListCmd(cfg),
-		newInstallCmd(cfg),
-		newUninstallCmd(cfg),
-		newRegistryCmd(cfg),
-		newVersionCmd(cfg),
+		newInstallCmd(cfg, root),
+		newUninstallCmd(cfg, root),
+		newDebugCmd(root),
+		newVersionCmd(),
 	)
-	return cmd
+
+	return cmd, nil
 }
