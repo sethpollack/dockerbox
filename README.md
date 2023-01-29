@@ -51,7 +51,7 @@ kubectl -> /Users/seth/go/bin/dockerbox
 terraform -> /Users/seth/go/bin/dockerbox
 ```
 
-Full schema can be found [here](github.com/sethpollack/dockerbox/blob/master/cue/schema.cue).
+Full schema can be found [here](cue/schema.cue).
 
 You can also overide an applets settings at runtime with flags followed by a separator. The default separator is `--` and can be configured with the `DOCKERBOX_SEPARATOR` environment variable.
 
