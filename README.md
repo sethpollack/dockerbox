@@ -1,12 +1,19 @@
+
 # DockerBox
 
 `dockerbox` is a tool that allows you to run command line tools using Docker instead of native binaries. It works by symlinking commands to the Dockerbox binary, which then looks up the `docker run` configuration and executes the `docker run command` for you.
 
-Dockerbox uses configuration files written in Cuelang (https://cuelang.org/) for specifying the Docker run configuration. The root schema for the configuration files contains the following fields:
+
+Dockerbox uses configuration files written in Cuelang (https://cuelang.org/) for specifying the Docker run configuration. 
+
+The root schema for the configuration files contains the following fields:
 
 `environ: [string]: string` - This field is automatically populated with the host's environment variables at runtime.
+
 `applets: [string]: #Applet` - This field is used to configure the applets.
+
 `ignore:  [string]: #Applet` - This field is used to instruct dockerbox to skip certain applets when running the dockerbox install command.
+
 
 `dockerbox` will look for configuration files by walking the path of your current directory and unifying all of the files.
 
@@ -53,7 +60,26 @@ terraform -> /Users/seth/go/bin/dockerbox
 
 Full schema can be found [here](cue/schema.cue).
 
-You can also overide an applets settings at runtime with flags followed by a separator. The default separator is `--` and can be configured with the `DOCKERBOX_SEPARATOR` environment variable.
+You can also override an applets settings at runtime with flags followed by a separator. The default separator is `--` and can be configured with the `DOCKERBOX_SEPARATOR` environment variable.
+
+For example:
+
+```
+applets: {
+  kubectl: {
+	  name: "kubectl"
+	  image: "kubectl"
+  }
+}
+```
+
+If the user wants to run `kubectl proxy` they can either add the ports section to the config, or they can just pass an additional runtime flag which will be passed along to the docker run command.
+
+```
+kubectl -p 8080:8080 -- proxy --port=8080
+```
+
+The full flag spec can be found below:
 
 ```
       --after-hook strings    Run container after
@@ -95,7 +121,7 @@ Usage:
 
 Available Commands:
   help        Help about any command
-  install     install docker applet
-  uninstall   uninstall docker applet
+  install     Install docker applet
+  uninstall   Uninstall docker applet
   version
 ```
