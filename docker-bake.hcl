@@ -7,7 +7,7 @@ variable "VERSION" {
 }
 
 group "default" {
-  targets = ["binaries"]
+  targets = ["binaries-cross"]
 }
 
 target "binaries" {
@@ -22,6 +22,8 @@ target "binaries-cross" {
   inherits = ["binaries"]
   platforms = [
     "darwin/amd64",
+    "darwin/arm64",
     "linux/amd64",
+    "linux/arm64",
   ]
 }

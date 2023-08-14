@@ -6,7 +6,7 @@ ARG VERSION
 RUN --mount=target=. \
   GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -ldflags \
   "-X github.com/sethpollack/dockerbox/version.Version=${VERSION} -X github.com/sethpollack/dockerbox/version.Commit=`git log -n 1 --pretty=format:"%h"`" \
-  -o /build/dockerbox
+  -o /build/dockerbox_v${VERSION}_${TARGETOS}_${TARGETARCH}
 
 FROM scratch AS bin
 COPY --from=build /build/ ./
