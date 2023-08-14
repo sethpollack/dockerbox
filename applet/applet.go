@@ -287,10 +287,6 @@ func (a Applet) appletCmds(extra ...string) [][]string {
 }
 
 func (a Applet) validateRequired() error {
-	if a.Name == "" {
-		return fmt.Errorf("name is required")
-	}
-
 	if a.Image == "" {
 		return fmt.Errorf("image is required")
 	}
