@@ -1,5 +1,5 @@
 #Applet: {
-  name: string
+  name?: string
   entrypoint?: string
   image: string
   image_tag: string | *"latest"

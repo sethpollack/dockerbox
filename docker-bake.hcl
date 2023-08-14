@@ -3,7 +3,7 @@ variable "DESTDIR" {
 }
 
 variable "VERSION" {
-  default = "2.0.0"
+  default = "2.0.1"
 }
 
 group "default" {
