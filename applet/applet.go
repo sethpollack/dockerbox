@@ -20,6 +20,8 @@ type Root struct {
 type Applets map[string]Applet
 
 type Applet struct {
+	AppletName string `json:"applet_name" desc:"name of the applet"`
+
 	Entrypoint string `json:"entrypoint" flag:"entrypoint" desc:"Overwrite the default ENTRYPOINT of the image"`
 	Hostname   string `json:"hostname" flag:"hostname" desc:"Container host name"`
 	Image      string `json:"image" flag:"image" desc:"Container image"`
@@ -97,9 +99,9 @@ func (applets Applets) allCmds(current Applet, args ...string) ([][]string, erro
 		cmds := [][]string{}
 
 		for _, bh := range applet.BeforeHooks {
-			h, ok := applets[bh.Name]
+			h, ok := applets[bh.AppletName]
 			if !ok {
-				return nil, fmt.Errorf("before hook %s not found", bh.Name)
+				return nil, fmt.Errorf("before hook %s not found", bh.AppletName)
 			}
 
 			cmd, err := allCmds(h)
@@ -116,9 +118,9 @@ func (applets Applets) allCmds(current Applet, args ...string) ([][]string, erro
 		)
 
 		for _, ah := range applet.AfterHooks {
-			h, ok := applets[ah.Name]
+			h, ok := applets[ah.AppletName]
 			if !ok {
-				return cmds, fmt.Errorf("after hook %s not found", ah.Name)
+				return cmds, fmt.Errorf("after hook %s not found", ah.AppletName)
 			}
 
 			cmd, err := allCmds(h)
@@ -287,6 +289,10 @@ func (a Applet) appletCmds(extra ...string) [][]string {
 }
 
 func (a Applet) validateRequired() error {
+	if a.AppletName == "" {
+		return fmt.Errorf("applet_name is required")
+	}
+
 	if a.Image == "" {
 		return fmt.Errorf("image is required")
 	}
@@ -298,16 +304,16 @@ func (a Applet) validateHooks(applets Applets) error {
 	var validate func(Applet, map[string]bool) error
 
 	validate = func(applet Applet, visited map[string]bool) error {
-		if visited[applet.Name] {
-			return fmt.Errorf("circular dependency detected: %s", applet.Name)
+		if visited[applet.AppletName] {
+			return fmt.Errorf("circular dependency detected: %s", applet.AppletName)
 		}
 
-		visited[applet.Name] = true
+		visited[applet.AppletName] = true
 
 		for _, h := range applet.BeforeHooks {
-			bh, ok := applets[h.Name]
+			bh, ok := applets[h.AppletName]
 			if !ok {
-				return fmt.Errorf("before hook %s not found", h.Name)
+				return fmt.Errorf("before hook %s not found", h.AppletName)
 			}
 
 			err := validate(bh, visited)
@@ -317,9 +323,9 @@ func (a Applet) validateHooks(applets Applets) error {
 		}
 
 		for _, h := range applet.AfterHooks {
-			ah, ok := applets[h.Name]
+			ah, ok := applets[h.AppletName]
 			if !ok {
-				return fmt.Errorf("after hook %s not found", h.Name)
+				return fmt.Errorf("after hook %s not found", h.AppletName)
 			}
 
 			err := validate(ah, visited)

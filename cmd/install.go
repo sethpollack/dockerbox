@@ -16,10 +16,10 @@ func newInstallCmd(cfg *dockerbox.Config, root *applet.Root) *cobra.Command {
 		Short: "install docker applet",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			for _, applet := range root.Applets {
-				if _, ok := root.Ignore[applet.Name]; !ok {
-					err := install(cfg.DockerboxExe, cfg.InstallDir, applet.Name)
+				if _, ok := root.Ignore[applet.AppletName]; !ok {
+					err := install(cfg.DockerboxExe, cfg.InstallDir, applet.AppletName)
 					if err != nil {
-						return fmt.Errorf("failed to install %s: %v", applet.Name, err)
+						return fmt.Errorf("failed to install %s: %v", applet.AppletName, err)
 					}
 				}
 			}

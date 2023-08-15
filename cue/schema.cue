@@ -1,4 +1,6 @@
 #Applet: {
+  applet_name: string
+
   name?: string
   entrypoint?: string
   image: string

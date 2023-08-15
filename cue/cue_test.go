@@ -32,7 +32,7 @@ func TestNew(t *testing.T) {
 					path: "/root/test.dbx.cue",
 					data: `
 						applets: test: #Applet & {
-							name: "test"
+							applet_name: "test"
 							image: "test"
 						}
 					`,
@@ -42,7 +42,7 @@ func TestNew(t *testing.T) {
 			expected: &applet.Root{
 				Applets: map[string]applet.Applet{
 					"test": {
-						Name:        "test",
+						AppletName:  "test",
 						Image:       "test",
 						Tag:         "latest",
 						Interactive: true,
@@ -59,7 +59,7 @@ func TestNew(t *testing.T) {
 					path: "/root/test.dbx.cue",
 					data: `
 						applets: test: #Applet & {
-							name: "test"
+							applet_name: "test"
 							image: "test"
 							invalid: "invalid"
 						}
@@ -89,7 +89,7 @@ func TestNew(t *testing.T) {
 					path: "/root/test.dbx.cue",
 					data: `
 						applets: test: #Applet & {
-							name: "test"
+							applet_name: "test"
 							image: "test"
 						}
 					`,
@@ -98,7 +98,7 @@ func TestNew(t *testing.T) {
 					path: "/src/test.dbx.cue",
 					data: `
 						applets: test: #Applet & {
-							name: "test"
+							applet_name: "test"
 							image: "test"
 							entrypoint: "test"
 						}
@@ -109,7 +109,7 @@ func TestNew(t *testing.T) {
 			expected: &applet.Root{
 				Applets: map[string]applet.Applet{
 					"test": {
-						Name:        "test",
+						AppletName:  "test",
 						Image:       "test",
 						Entrypoint:  "test",
 						Tag:         "latest",
@@ -127,7 +127,7 @@ func TestNew(t *testing.T) {
 					path: "/root/test.dbx.cue",
 					data: `
 						applets: test: #Applet & {
-							name: "test"
+							applet_name: "test"
 							image: "test"
 						}
 					`,
@@ -136,14 +136,14 @@ func TestNew(t *testing.T) {
 					path: "/src/test.dbx.cue",
 					data: `
 						applets: test: #Applet & {
-							name: "foo"
+							applet_name: "foo"
 							image: "test"
 						}
 					`,
 				},
 			},
 			files: []string{"/root/test.dbx.cue", "/src/test.dbx.cue"},
-			err:   errors.New("failed to unify cue: applets.test.name: conflicting values \"foo\" and \"test\":\n    /root/test.dbx.cue:3:14\n    /src/test.dbx.cue:3:14\n"),
+			err:   errors.New("failed to unify cue: applets.test.applet_name: conflicting values \"foo\" and \"test\":\n    /root/test.dbx.cue:3:21\n    /src/test.dbx.cue:3:21\n"),
 		},
 		{
 			name: "adds environment variables",
@@ -154,7 +154,7 @@ func TestNew(t *testing.T) {
 				{
 					path: "/root/test.dbx.cue",
 					data: `
-						applets: test: { Name: "\(environ.FOO)" }
+						applets: test: { applet_name: "\(environ.FOO)" }
 					`,
 				},
 			},
@@ -162,7 +162,7 @@ func TestNew(t *testing.T) {
 			expected: &applet.Root{
 				Applets: map[string]applet.Applet{
 					"test": {
-						Name: "bar",
+						AppletName: "bar",
 					},
 				},
 			},
@@ -174,13 +174,13 @@ func TestNew(t *testing.T) {
 					path: "/root/test.dbx.cue",
 					data: `
 						applets: test: #Applet &{
-							name: "test"
+							applet_name: "test"
 						}
 					`,
 				},
 			},
 			files: []string{"/root/test.dbx.cue"},
-			err:   errors.New("failed to validate cue: applets.test.image: incomplete value string:\n    schema.cue:4:10\n"),
+			err:   errors.New("failed to validate cue: applets.test.image: incomplete value string:\n    schema.cue:6:10\n"),
 		},
 	}
 

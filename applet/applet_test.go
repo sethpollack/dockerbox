@@ -36,14 +36,14 @@ func TestCompile(t *testing.T) {
 			cfg: &dockerbox.Config{
 				EntryPoint: "test",
 			},
-			err: errors.New("failed to validate applet: name is required"),
+			err: errors.New("failed to validate applet: applet_name is required"),
 		},
 		{
 			name: "validates missing image",
 			root: Root{
 				Applets: map[string]Applet{
 					"test": {
-						Name: "test",
+						AppletName: "test",
 					},
 				},
 			},
@@ -57,12 +57,12 @@ func TestCompile(t *testing.T) {
 			root: Root{
 				Applets: map[string]Applet{
 					"test": {
-						Name:  "test",
-						Image: "test",
+						AppletName: "test",
+						Image:      "test",
 						BeforeHooks: []Applet{
 							{
-								Name:  "before",
-								Image: "before",
+								AppletName: "before",
+								Image:      "before",
 							},
 						},
 					},
@@ -78,12 +78,12 @@ func TestCompile(t *testing.T) {
 			root: Root{
 				Applets: map[string]Applet{
 					"test": {
-						Name:  "test",
-						Image: "test",
+						AppletName: "test",
+						Image:      "test",
 						AfterHooks: []Applet{
 							{
-								Name:  "after",
-								Image: "after",
+								AppletName: "after",
+								Image:      "after",
 							},
 						},
 					},
@@ -99,22 +99,22 @@ func TestCompile(t *testing.T) {
 			root: Root{
 				Applets: map[string]Applet{
 					"before": {
-						Name:  "before",
-						Image: "before",
+						AppletName: "before",
+						Image:      "before",
 						BeforeHooks: []Applet{
 							{
-								Name:  "test",
-								Image: "test",
+								AppletName: "test",
+								Image:      "test",
 							},
 						},
 					},
 					"test": {
-						Name:  "test",
-						Image: "test",
+						AppletName: "test",
+						Image:      "test",
 						BeforeHooks: []Applet{
 							{
-								Name:  "before",
-								Image: "before",
+								AppletName: "before",
+								Image:      "before",
 							},
 						},
 					},
@@ -130,22 +130,22 @@ func TestCompile(t *testing.T) {
 			root: Root{
 				Applets: map[string]Applet{
 					"after": {
-						Name:  "after",
-						Image: "after",
+						AppletName: "after",
+						Image:      "after",
 						AfterHooks: []Applet{
 							{
-								Name:  "test",
-								Image: "test",
+								AppletName: "test",
+								Image:      "test",
 							},
 						},
 					},
 					"test": {
-						Name:  "test",
-						Image: "test",
+						AppletName: "test",
+						Image:      "test",
 						AfterHooks: []Applet{
 							{
-								Name:  "after",
-								Image: "after",
+								AppletName: "after",
+								Image:      "after",
 							},
 						},
 					},
@@ -161,15 +161,15 @@ func TestCompile(t *testing.T) {
 			root: Root{
 				Applets: map[string]Applet{
 					"test": {
-						Name:  "test",
-						Image: "test",
-						Pull:  true,
+						AppletName: "test",
+						Image:      "test",
+						Pull:       true,
 					},
 				},
 			},
 			cmds: [][]string{
 				{"docker", "pull", "test"},
-				{"docker", "run", "--name", "test", "test"},
+				{"docker", "run", "test"},
 			},
 			cfg: &dockerbox.Config{
 				EntryPoint: "test",
@@ -181,9 +181,10 @@ func TestCompile(t *testing.T) {
 			root: Root{
 				Applets: map[string]Applet{
 					"test": {
-						Name:  "test",
-						Image: "test",
-						Kill:  true,
+						AppletName: "test",
+						Name:       "test",
+						Image:      "test",
+						Kill:       true,
 					},
 				},
 			},
@@ -201,35 +202,35 @@ func TestCompile(t *testing.T) {
 			root: Root{
 				Applets: map[string]Applet{
 					"before": {
-						Name:  "before",
-						Image: "before",
+						AppletName: "before",
+						Image:      "before",
 					},
 					"after": {
-						Name:  "after",
-						Image: "after",
+						AppletName: "after",
+						Image:      "after",
 					},
 					"test": {
-						Name:  "test",
-						Image: "test",
+						AppletName: "test",
+						Image:      "test",
 						BeforeHooks: []Applet{
 							{
-								Name:  "before",
-								Image: "before",
+								AppletName: "before",
+								Image:      "before",
 							},
 						},
 						AfterHooks: []Applet{
 							{
-								Name:  "after",
-								Image: "after",
+								AppletName: "after",
+								Image:      "after",
 							},
 						},
 					},
 				},
 			},
 			cmds: [][]string{
-				{"docker", "run", "--name", "before", "before"},
-				{"docker", "run", "--name", "test", "test"},
-				{"docker", "run", "--name", "after", "after"},
+				{"docker", "run", "before"},
+				{"docker", "run", "test"},
+				{"docker", "run", "after"},
 			},
 			cfg: &dockerbox.Config{
 				EntryPoint: "test",
@@ -241,8 +242,8 @@ func TestCompile(t *testing.T) {
 			root: Root{
 				Applets: map[string]Applet{
 					"test": {
-						Name:  "test",
-						Image: "test",
+						AppletName: "test",
+						Image:      "test",
 					},
 				},
 			},
@@ -258,14 +259,17 @@ func TestCompile(t *testing.T) {
 			root: Root{
 				Applets: map[string]Applet{
 					"before": {
-						Name:  "before",
-						Image: "before",
+						AppletName: "before",
+						Name:       "before",
+						Image:      "before",
 					},
 					"after": {
-						Name:  "after",
-						Image: "after",
+						AppletName: "after",
+						Name:       "after",
+						Image:      "after",
 					},
 					"test": {
+						AppletName: "test",
 						Name:       "test",
 						Image:      "test",
 						Tag:        "test",
@@ -295,14 +299,16 @@ func TestCompile(t *testing.T) {
 
 						BeforeHooks: []Applet{
 							{
-								Name:  "before",
-								Image: "before",
+								AppletName: "before",
+								Name:       "before",
+								Image:      "before",
 							},
 						},
 						AfterHooks: []Applet{
 							{
-								Name:  "after",
-								Image: "after",
+								AppletName: "after",
+								Name:       "after",
+								Image:      "after",
 							},
 						},
 					},
