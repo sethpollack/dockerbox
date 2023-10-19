@@ -5,16 +5,22 @@ import (
 	"os/exec"
 )
 
-func RunCmds(cmds [][]string) error {
-	for _, args := range cmds {
-		cmd := exec.Command(args[0], args[1:]...)
+type Cmd struct {
+	Silent bool
+	Args   []string
+}
 
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		cmd.Stdin = os.Stdin
+func RunCmds(cmds []Cmd) error {
+	for _, cmd := range cmds {
+		exec := exec.Command(cmd.Args[0], cmd.Args[1:]...)
+		if !cmd.Silent {
+			exec.Stdout = os.Stdout
+			exec.Stderr = os.Stderr
+			exec.Stdin = os.Stdin
+		}
 
-		err := cmd.Run()
-		if err != nil {
+		err := exec.Run()
+		if err != nil && !cmd.Silent {
 			return err
 		}
 	}

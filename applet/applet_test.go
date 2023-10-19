@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/sethpollack/dockerbox/dockerbox"
+	"github.com/sethpollack/dockerbox/runner"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,7 +13,7 @@ func TestCompile(t *testing.T) {
 	tt := []struct {
 		name string
 		root Root
-		cmds [][]string
+		cmds []runner.Cmd
 		cfg  *dockerbox.Config
 		err  error
 	}{
@@ -167,9 +168,9 @@ func TestCompile(t *testing.T) {
 					},
 				},
 			},
-			cmds: [][]string{
-				{"docker", "pull", "test"},
-				{"docker", "run", "test"},
+			cmds: []runner.Cmd{
+				{Args: []string{"docker", "pull", "test"}},
+				{Args: []string{"docker", "run", "test"}},
 			},
 			cfg: &dockerbox.Config{
 				EntryPoint: "test",
@@ -188,9 +189,9 @@ func TestCompile(t *testing.T) {
 					},
 				},
 			},
-			cmds: [][]string{
-				{"docker", "kill", "test"},
-				{"docker", "run", "--name", "test", "test"},
+			cmds: []runner.Cmd{
+				{Silent: true, Args: []string{"docker", "kill", "test"}},
+				{Args: []string{"docker", "run", "--name", "test", "test"}},
 			},
 			cfg: &dockerbox.Config{
 				EntryPoint: "test",
@@ -227,10 +228,10 @@ func TestCompile(t *testing.T) {
 					},
 				},
 			},
-			cmds: [][]string{
-				{"docker", "run", "before"},
-				{"docker", "run", "test"},
-				{"docker", "run", "after"},
+			cmds: []runner.Cmd{
+				{Args: []string{"docker", "run", "before"}},
+				{Args: []string{"docker", "run", "test"}},
+				{Args: []string{"docker", "run", "after"}},
 			},
 			cfg: &dockerbox.Config{
 				EntryPoint: "test",
@@ -257,6 +258,18 @@ func TestCompile(t *testing.T) {
 		{
 			name: "full applet",
 			root: Root{
+				Volumes: map[string]Volume{
+					"test": {
+						Name:   "test",
+						Driver: "test",
+					},
+				},
+				Networks: map[string]Network{
+					"test": {
+						Name:   "test",
+						Driver: "test",
+					},
+				},
 				Applets: map[string]Applet{
 					"before": {
 						AppletName: "before",
@@ -275,7 +288,6 @@ func TestCompile(t *testing.T) {
 						Tag:        "test",
 						Entrypoint: "test",
 						Hostname:   "test",
-						Network:    "test",
 						Restart:    "test",
 						WorkDir:    "test",
 
@@ -295,6 +307,7 @@ func TestCompile(t *testing.T) {
 						EnvFile:   []string{"test"},
 						Links:     []string{"test"},
 						Volumes:   []string{"test"},
+						Networks:  []string{"test"},
 						Ports:     []string{"test"},
 
 						BeforeHooks: []Applet{
@@ -314,12 +327,14 @@ func TestCompile(t *testing.T) {
 					},
 				},
 			},
-			cmds: [][]string{
-				{"docker", "run", "--name", "before", "before"},
-				{"docker", "pull", "test:test"},
-				{"docker", "kill", "test"},
-				{"docker", "run", "--name", "test", "--workdir", "test", "--entrypoint", "test", "--restart", "test", "--network", "test", "--hostname", "test", "--rm", "--privileged", "--detach", "--interactive", "--dns", "test", "--dns-search", "test", "--dns-option", "test", "-e", "test", "-v", "test", "-p", "test", "--env-file", "test", "--link", "test", "test:test", "test", "my", "args"},
-				{"docker", "run", "--name", "after", "after"},
+			cmds: []runner.Cmd{
+				{Args: []string{"docker", "network", "create", "--driver", "test", "test"}},
+				{Args: []string{"docker", "volume", "create", "--driver", "test", "test"}},
+				{Args: []string{"docker", "run", "--name", "before", "before"}},
+				{Args: []string{"docker", "pull", "test:test"}},
+				{Silent: true, Args: []string{"docker", "kill", "test"}},
+				{Args: []string{"docker", "run", "--name", "test", "--workdir", "test", "--entrypoint", "test", "--restart", "test", "--hostname", "test", "--rm", "--privileged", "--detach", "--interactive", "--dns", "test", "--dns-search", "test", "--dns-option", "test", "-e", "test", "-v", "test", "--network", "test", "-p", "test", "--env-file", "test", "--link", "test", "test:test", "test", "my", "args"}},
+				{Args: []string{"docker", "run", "--name", "after", "after"}},
 			},
 			cfg: &dockerbox.Config{
 				EntryPoint: "test",

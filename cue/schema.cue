@@ -9,7 +9,6 @@
 
   restart?: string | "no" | "always" | "on-failure" | "unless-stopped"
   hostname?: string
-  network?: string
 
   interactive: bool | *true
   tty: bool | *true
@@ -31,8 +30,21 @@
   links?: [...string]
   ports?: [...string]
   volumes?: [...string]
+  networks?: [...string]
+}
+
+#Network: {
+  name: string
+  driver?: string
+}
+
+#Volume: {
+  name: string
+  driver?: string
 }
 
 environ: [string]: string
 applets: [string]: #Applet
+networks: [string]: #Network
+volumes: [string]: #Volume
 ignore: [string]: #Applet

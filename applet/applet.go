@@ -6,6 +6,7 @@ import (
 
 	"github.com/octago/sflags/gen/gpflag"
 	"github.com/sethpollack/dockerbox/dockerbox"
+	"github.com/sethpollack/dockerbox/runner"
 	"github.com/spf13/pflag"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -13,8 +14,10 @@ import (
 const dockerExe = "docker"
 
 type Root struct {
-	Ignore  map[string]Applet `json:"ignore"`
-	Applets Applets           `json:"applets"`
+	Ignore   map[string]Applet  `json:"ignore"`
+	Applets  Applets            `json:"applets"`
+	Volumes  map[string]Volume  `json:"volumes"`
+	Networks map[string]Network `json:"networks"`
 }
 
 type Applets map[string]Applet
@@ -26,7 +29,6 @@ type Applet struct {
 	Hostname   string `json:"hostname" flag:"hostname" desc:"Container host name"`
 	Image      string `json:"image" flag:"image" desc:"Container image"`
 	Name       string `json:"name" flag:"name" desc:"Assign a name to the container"`
-	Network    string `json:"network" flag:"network" desc:"Connect a container to a network"`
 	Restart    string `json:"restart" flag:"restart" desc:"Restart policy to apply when a container exits (default \no\")"`
 	Tag        string `json:"image_tag" flag:"tag" desc:"Container image tag"`
 	WorkDir    string `json:"work_dir" flag:"workdir w" desc:"Working directory inside the container"`
@@ -49,10 +51,21 @@ type Applet struct {
 	EnvFile     []string `json:"env_file" flag:"env-file" desc:"Read in a file of environment variables"`
 	Links       []string `json:"links" flag:"link" desc:"Add link to another container"`
 	Ports       []string `json:"ports" flag:"publish p" desc:"Publish a container's port(s) to the host"`
+	Networks    []string `json:"network" flag:"network" desc:"Connect a container to a network"`
 	Volumes     []string `json:"volumes" flag:"volume v" desc:"Bind mount a volume"`
 }
 
-func (root *Root) Compile(cfg *dockerbox.Config) ([][]string, error) {
+type Volume struct {
+	Name   string `json:"name"`
+	Driver string `json:"driver"`
+}
+
+type Network struct {
+	Name   string `json:"name"`
+	Driver string `json:"driver"`
+}
+
+func (root *Root) Compile(cfg *dockerbox.Config) ([]runner.Cmd, error) {
 	a, ok := root.Applets[cfg.EntryPoint]
 	if !ok {
 		return nil, fmt.Errorf("applet %s not found", cfg.EntryPoint)
@@ -76,7 +89,26 @@ func (root *Root) Compile(cfg *dockerbox.Config) ([][]string, error) {
 		return nil, fmt.Errorf("failed to validate applet: %v", err)
 	}
 
-	return root.Applets.allCmds(a, aArgs...)
+	allCmds := []runner.Cmd{}
+
+	for _, n := range root.Networks {
+		allCmds = append(allCmds, n.createNetworkCmd())
+	}
+
+	for _, v := range a.Volumes {
+		if vol, ok := root.Volumes[v]; ok {
+			allCmds = append(allCmds, vol.createVolumeCmd())
+		}
+	}
+
+	appletCmds, err := root.Applets.allCmds(a, aArgs...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get applet commands: %v", err)
+	}
+
+	allCmds = append(allCmds, appletCmds...)
+
+	return allCmds, nil
 }
 
 func (root *Root) validate(a Applet) error {
@@ -93,10 +125,10 @@ func (root *Root) validate(a Applet) error {
 	return nil
 }
 
-func (applets Applets) allCmds(current Applet, args ...string) ([][]string, error) {
-	var allCmds func(Applet, ...string) ([][]string, error)
-	allCmds = func(applet Applet, args ...string) ([][]string, error) {
-		cmds := [][]string{}
+func (applets Applets) allCmds(current Applet, args ...string) ([]runner.Cmd, error) {
+	var allCmds func(Applet, ...string) ([]runner.Cmd, error)
+	allCmds = func(applet Applet, args ...string) ([]runner.Cmd, error) {
+		cmds := []runner.Cmd{}
 
 		for _, bh := range applet.BeforeHooks {
 			h, ok := applets[bh.AppletName]
@@ -142,17 +174,18 @@ func (applets Applets) allCmds(current Applet, args ...string) ([][]string, erro
 	return cmds, nil
 }
 
-func (a Applet) killCmd() []string {
-	args := []string{
-		dockerExe,
-		"kill",
-		a.Name,
+func (a Applet) killCmd() runner.Cmd {
+	return runner.Cmd{
+		Silent: true,
+		Args: []string{
+			dockerExe,
+			"kill",
+			a.Name,
+		},
 	}
-
-	return args
 }
 
-func (a Applet) pullCmd() []string {
+func (a Applet) pullCmd() runner.Cmd {
 	args := []string{
 		dockerExe,
 		"pull",
@@ -164,10 +197,12 @@ func (a Applet) pullCmd() []string {
 		args = append(args, a.Image)
 	}
 
-	return args
+	return runner.Cmd{
+		Args: args,
+	}
 }
 
-func (a Applet) runCmd(extra ...string) []string {
+func (a Applet) runCmd(extra ...string) runner.Cmd {
 	args := []string{
 		dockerExe,
 		"run",
@@ -187,10 +222,6 @@ func (a Applet) runCmd(extra ...string) []string {
 
 	if a.Restart != "" {
 		args = append(args, "--restart", a.Restart)
-	}
-
-	if a.Network != "" {
-		args = append(args, "--network", a.Network)
 	}
 
 	if a.Hostname != "" {
@@ -237,6 +268,10 @@ func (a Applet) runCmd(extra ...string) []string {
 		args = append(args, "-v", f)
 	}
 
+	for _, f := range a.Networks {
+		args = append(args, "--network", f)
+	}
+
 	for _, f := range a.Ports {
 		args = append(args, "-p", f)
 	}
@@ -261,11 +296,13 @@ func (a Applet) runCmd(extra ...string) []string {
 
 	args = append(args, extra...)
 
-	return args
+	return runner.Cmd{
+		Args: args,
+	}
 }
 
-func (a Applet) appletCmds(extra ...string) [][]string {
-	commands := [][]string{}
+func (a Applet) appletCmds(extra ...string) []runner.Cmd {
+	commands := []runner.Cmd{}
 	if a.Pull {
 		commands = append(
 			commands,
@@ -338,6 +375,42 @@ func (a Applet) validateHooks(applets Applets) error {
 	}
 
 	return validate(a, map[string]bool{})
+}
+
+func (v Volume) createVolumeCmd() runner.Cmd {
+	args := []string{
+		dockerExe,
+		"volume",
+		"create",
+	}
+
+	if v.Driver != "" {
+		args = append(args, "--driver", v.Driver)
+	}
+
+	args = append(args, v.Name)
+
+	return runner.Cmd{
+		Args: args,
+	}
+}
+
+func (n Network) createNetworkCmd() runner.Cmd {
+	args := []string{
+		dockerExe,
+		"network",
+		"create",
+	}
+
+	if n.Driver != "" {
+		args = append(args, "--driver", n.Driver)
+	}
+
+	args = append(args, n.Name)
+
+	return runner.Cmd{
+		Args: args,
+	}
 }
 
 func isTTY() bool {
