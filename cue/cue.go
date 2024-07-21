@@ -9,6 +9,7 @@ import (
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
 	"cuelang.org/go/cue/errors"
+	"cuelang.org/go/cue/load"
 	"github.com/sethpollack/dockerbox/applet"
 	"github.com/spf13/afero"
 )
@@ -102,20 +103,31 @@ func (c *Cue) Values() ([]cue.Value, error) {
 		return nil, fmt.Errorf("failed to compile schema: %v", errors.Details(schema.Err(), nil))
 	}
 
+	cfg := &load.Config{
+		Overlay: map[string]load.Source{},
+	}
+
 	for _, filename := range c.files {
 		bytes, err := afero.ReadFile(c.fs, filename)
 		if err != nil {
 			return nil, fmt.Errorf("failed to read %s: %v", filename, err)
 		}
-		value := c.ctx.CompileBytes(
-			bytes,
-			cue.Filename(filename),
-			cue.Scope(schema),
-		)
-		if value.Err() != nil {
-			return nil, fmt.Errorf("failed to compile %s: %v", filename, errors.Details(value.Err(), nil))
+
+		cfg.Overlay[filename] = load.FromBytes(bytes)
+
+		bis := load.Instances(c.files, cfg)
+		for _, bi := range bis {
+			if bi.Err != nil {
+				return nil, fmt.Errorf("failed to load %s: %v", filename, bi.Err)
+			}
+
+			value := c.ctx.BuildInstance(bi, cue.Scope(schema))
+			if value.Err() != nil {
+				return nil, fmt.Errorf("failed to build instance for %s: %v", bi.DisplayPath, errors.Details(value.Err(), nil))
+			}
+
+			values = append(values, value)
 		}
-		values = append(values, value)
 	}
 
 	return values, nil

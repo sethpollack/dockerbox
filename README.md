@@ -4,7 +4,7 @@
 `dockerbox` is a tool that allows you to run command line tools using Docker instead of native binaries. It works by symlinking commands to the Dockerbox binary, which then looks up the `docker run` configuration and executes the `docker run command` for you.
 
 
-Dockerbox uses configuration files written in [Cuelang](https://cuelang.org/) for specifying the Docker run configuration. 
+Dockerbox uses configuration files written in [Cuelang](https://cuelang.org/) for specifying the Docker run configuration.
 
 The root schema for the configuration files contains the following fields:
 

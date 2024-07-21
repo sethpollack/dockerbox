@@ -8,7 +8,7 @@ import (
 	"github.com/sethpollack/dockerbox/dockerbox"
 	"github.com/sethpollack/dockerbox/runner"
 	"github.com/spf13/pflag"
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 )
 
 const dockerExe = "docker"
@@ -414,7 +414,7 @@ func (n Network) createNetworkCmd() runner.Cmd {
 }
 
 func isTTY() bool {
-	return terminal.IsTerminal(int(os.Stdin.Fd()))
+	return term.IsTerminal(int(os.Stdin.Fd()))
 }
 
 func splitArgs(separator string, args []string) ([]string, []string) {
