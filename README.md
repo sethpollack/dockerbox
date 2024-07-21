@@ -38,7 +38,9 @@ To prevent the installation of an applet, add it to the ignore list in any of yo
 
 ```
 $ cat <<'EOF' >$HOME/.ignore.dbx.cue
-ignore: [applets.kubectl]
+ignore: {
+	kubectl: {}
+}
 EOF
 ```
 
