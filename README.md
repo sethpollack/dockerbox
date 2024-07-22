@@ -12,8 +12,11 @@ The root schema for the configuration files contains the following fields:
 
 `applets: [string]: #Applet` - This field is used to configure the applets.
 
-`ignore:  [string]: #Applet` - This field is used to instruct dockerbox to skip certain applets when running the dockerbox install command.
+`networks: [string]: #Network` - This field is used to configure the networks.
 
+`volumes: [string]: #Volume` - This field is used to configure the volumes.
+
+`ignore:  [string]: #Applet` - This field is used to instruct dockerbox to skip certain applets when running the dockerbox install command.
 
 `dockerbox` will look for configuration files by walking the path of your current directory and unifying all of the files.
 
@@ -122,8 +125,15 @@ Usage:
   dockerbox [command]
 
 Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  debug       debug config files
   help        Help about any command
-  install     Install docker applet
-  uninstall   Uninstall docker applet
+  install     install docker applet
+  uninstall   uninstall docker applet
   version
+
+Flags:
+  -h, --help   help for dockerbox
+
+Use "dockerbox [command] --help" for more information about a command.
 ```
