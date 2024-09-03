@@ -67,7 +67,7 @@ func TestNew(t *testing.T) {
 				},
 			},
 			files: []string{"/root/test.dbx.cue"},
-			err:   errors.New("failed to compile /root/test.dbx.cue: applets.test: field not allowed: invalid:\n    /root/test.dbx.cue:2:22\n    /root/test.dbx.cue:5:8\n    schema.cue:1:10\n"),
+			err:   errors.New("failed to build instance for command-line-arguments: applets.test: field not allowed: invalid:\n    /root/test.dbx.cue:2:22\n    /root/test.dbx.cue:5:8\n    schema.cue:1:10\n"),
 		},
 		{
 			name: "fails to decode invalid configs",
@@ -143,7 +143,7 @@ func TestNew(t *testing.T) {
 				},
 			},
 			files: []string{"/root/test.dbx.cue", "/src/test.dbx.cue"},
-			err:   errors.New("failed to unify cue: applets.test.applet_name: conflicting values \"foo\" and \"test\":\n    /root/test.dbx.cue:3:21\n    /src/test.dbx.cue:3:21\n"),
+			err:   errors.New("failed to build instance for command-line-arguments: applets.test.applet_name: conflicting values \"test\" and \"foo\":\n    /root/test.dbx.cue:3:21\n    /src/test.dbx.cue:3:21\n"),
 		},
 		{
 			name: "adds environment variables",

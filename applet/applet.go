@@ -51,7 +51,7 @@ type Applet struct {
 	EnvFile     []string `json:"env_file" flag:"env-file" desc:"Read in a file of environment variables"`
 	Links       []string `json:"links" flag:"link" desc:"Add link to another container"`
 	Ports       []string `json:"ports" flag:"publish p" desc:"Publish a container's port(s) to the host"`
-	Networks    []string `json:"network" flag:"network" desc:"Connect a container to a network"`
+	Networks    []string `json:"networks" flag:"network" desc:"Connect a container to a network"`
 	Volumes     []string `json:"volumes" flag:"volume v" desc:"Bind mount a volume"`
 }
 

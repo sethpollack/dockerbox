@@ -114,20 +114,20 @@ func (c *Cue) Values() ([]cue.Value, error) {
 		}
 
 		cfg.Overlay[filename] = load.FromBytes(bytes)
+	}
 
-		bis := load.Instances(c.files, cfg)
-		for _, bi := range bis {
-			if bi.Err != nil {
-				return nil, fmt.Errorf("failed to load %s: %v", filename, bi.Err)
-			}
-
-			value := c.ctx.BuildInstance(bi, cue.Scope(schema))
-			if value.Err() != nil {
-				return nil, fmt.Errorf("failed to build instance for %s: %v", bi.DisplayPath, errors.Details(value.Err(), nil))
-			}
-
-			values = append(values, value)
+	bis := load.Instances(c.files, cfg)
+	for _, bi := range bis {
+		if bi.Err != nil {
+			return nil, fmt.Errorf("failed to load configs: %v", bi.Err)
 		}
+
+		value := c.ctx.BuildInstance(bi, cue.Scope(schema))
+		if value.Err() != nil {
+			return nil, fmt.Errorf("failed to build instance for %s: %v", bi.DisplayPath, errors.Details(value.Err(), nil))
+		}
+
+		values = append(values, value)
 	}
 
 	return values, nil
